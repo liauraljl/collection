@@ -3,22 +3,33 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.7.RELEASE</version>
+		<groupId>com.ljl.note.collection</groupId>
+		<artifactId>live-record</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.ljl.note.collection</groupId>
 	<artifactId>live-record-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>live-record-service</name>
 	<description>live-record-service</description>
-
-	<properties>
-		<java.version>1.8</java.version>
-	</properties>
+	<packaging>war</packaging>
 
 	<dependencies>
+		<!-- 引入服务-->
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>live-record-interface</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<!-- 引入服务-->
+
+
+		<dependency>
+			<groupId>com.alibaba.spring.boot</groupId>
+			<artifactId>dubbo-spring-boot-starter</artifactId>
+			<version>2.0.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
@@ -34,6 +45,8 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+
 	</dependencies>
 
 	<build>
