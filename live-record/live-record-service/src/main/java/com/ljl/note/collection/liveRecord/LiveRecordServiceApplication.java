@@ -1,4 +1,4 @@
-package com.ljl.note.collection;
+package com.ljl.note.collection.liveRecord;
 
 import com.alibaba.dubbo.spring.boot.annotation.EnableDubboConfiguration;
 import org.springframework.boot.SpringApplication;

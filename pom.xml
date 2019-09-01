@@ -34,14 +34,14 @@
 	</repositories>
 
 	<modules>
-		<module>fan</module>
-		<module>im</module>
-		<module>like</module>
-		<module>live</module>
-		<module>live-record</module>
-		<module>order</module>
-		<module>pay</module>
-		<module>process</module>
-		<module>red-envelope</module>
+		<module>fan</module><!--8091 -->
+		<module>im</module><!--8092 -->
+		<module>like</module><!--8093 -->
+		<module>live</module><!--8094 -->
+		<module>live-record</module><!--8095 -->
+		<module>order</module><!--8096 -->
+		<module>pay</module><!--8097 -->
+		<module>process</module><!--8098 -->
+		<module>red-envelope</module><!--8099 -->
 	</modules>
 </project>

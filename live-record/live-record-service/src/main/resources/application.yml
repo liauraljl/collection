@@ -1,6 +1,6 @@
 
 server:
-  port: 8081 #ÏîÄ¿¶Ë¿Ú
+  port: 8095
 
 spring:
   application:
