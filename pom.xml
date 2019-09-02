@@ -34,6 +34,7 @@
 	</repositories>
 
 	<modules>
+		<module>common</module>
 		<module>fan</module><!--8091 -->
 		<module>im</module><!--8092 -->
 		<module>like</module><!--8093 -->
