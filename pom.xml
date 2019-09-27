@@ -44,5 +44,6 @@
 		<module>pay</module><!--8097 -->
 		<module>process</module><!--8098 -->
 		<module>red-envelope</module><!--8099 -->
+		<module>support</module><!--8100 -->
 	</modules>
 </project>

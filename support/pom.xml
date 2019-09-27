@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.ljl.note.collection</groupId>
+        <artifactId>collection</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>support</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <description>客服服务</description>
+    <packaging>pom</packaging>
+
+    <properties>
+        <fastjson.version>1.2.53</fastjson.version>
+        <guava.version>15.0</guava.version>
+    </properties>
+
+    <modules>
+        <module>support-interface</module>
+        <module>support-service</module>
+    </modules>
+</project>
