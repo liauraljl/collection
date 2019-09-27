@@ -16,6 +16,10 @@
     <properties>
         <fastjson.version>1.2.53</fastjson.version>
         <guava.version>15.0</guava.version>
+        <jedis.version>2.9.1</jedis.version>
+        <redisson.version>3.7.3</redisson.version>
+        <nety.version>4.1.20.Final</nety.version>
+        <log4j.version>1.2.15</log4j.version>
     </properties>
 
     <modules>

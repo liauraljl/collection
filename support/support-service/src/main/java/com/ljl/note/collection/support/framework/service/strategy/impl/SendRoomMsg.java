@@ -1,7 +1,7 @@
 package com.ljl.note.collection.support.framework.service.strategy.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.ljl.note.collection.support.domain.enums.ConstantEnum;
+import com.ljl.note.collection.support.domain.enums.WebSocketMsgTypeEnum;
 import com.ljl.note.collection.support.framework.service.strategy.SendMessage;
 import com.ljl.note.collection.support.framework.util.NettyConnectionUtil;
 import com.ljl.note.collection.support.model.msgModel.RoomMsg;
@@ -35,7 +35,7 @@ public class SendRoomMsg implements SendMessage {
             if(!CollectionUtils.isEmpty(channelHandlerContexts)){
                 WebSocketMsgModel<Object> response = new WebSocketMsgModel<Object>(webSocketMsgModel.getMsgType(), roomMsg.getMsg());
                 String jsonData = JSON.toJSONString(response);
-                log.info("消息类型：{}，消息内容：{}", ConstantEnum.getByInt(webSocketMsgModel.getMsgType()),jsonData);
+                log.info("消息类型：{}，消息内容：{}", WebSocketMsgTypeEnum.getByInt(webSocketMsgModel.getMsgType()),jsonData);
                 log.info("通道:{},消息：{}", Arrays.toString(channelHandlerContexts.toArray()),jsonData);
                 channelHandlerContexts.parallelStream().forEach(t->t.writeAndFlush(new TextWebSocketFrame(jsonData.replaceAll("\"","\'"))));
                 result = channelHandlerContexts.size();

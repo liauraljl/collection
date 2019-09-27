@@ -3,7 +3,7 @@ package com.ljl.note.collection.support.framework.service.strategy.impl;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.ljl.note.collection.support.domain.dto.IMRoomDTO;
-import com.ljl.note.collection.support.domain.enums.ConstantEnum;
+import com.ljl.note.collection.support.domain.enums.WebSocketMsgTypeEnum;
 import com.ljl.note.collection.support.framework.service.strategy.SendMessage;
 import com.ljl.note.collection.support.framework.util.NettyConnectionUtil;
 import com.ljl.note.collection.support.model.msgModel.WebSocketMsgModel;
@@ -37,12 +37,12 @@ public class SendLiveRoomMsg implements SendMessage {
                     Long wid = Long.parseLong(t);
                     log.info("身份wid:{}",wid);
                     if(NettyConnectionUtil.userChannelMap.containsKey(wid)){
-                        if(webSocketMsgModel.getMsgType().equals(ConstantEnum.BARGAINACTIV.getI()) && NettyConnectionUtil.userRoomMap.containsKey(wid)){
+                        if(webSocketMsgModel.getMsgType().equals(WebSocketMsgTypeEnum.BARGAINACTIV.getType()) && NettyConnectionUtil.userRoomMap.containsKey(wid)){
                             String liveCode = NettyConnectionUtil.userRoomMap.get(wid);
                             log.info("当前用户所在的直播场次：wid：{}，liveCode:{}",wid,liveCode);
                             //wid在存在liveCode
                             List<String> liveCodeList = Lists.newArrayList();
-                            ActivityStartScoketMsgBO activityStartScoketMsgBO = JSON.parseObject(JSON.toJSONString(imRoomRequest.getContent()), ActivityStartScoketMsgBO.class);
+                            /*ActivityStartScoketMsgBO activityStartScoketMsgBO = JSON.parseObject(JSON.toJSONString(imRoomRequest.getContent()), ActivityStartScoketMsgBO.class);
                             for(int i=(activityStartScoketMsgBO.getActivityList().size()-1);i>=0;i--){
                                 List<ActivityStartScoketMsgBO.LiveRoomAndGoodsInfo> activityList = activityStartScoketMsgBO.getActivityList();
                                 List<ActivityStartScoketMsgBO.ActivityGoodsInfo> goodsList = activityList.get(i).getGoodsList();
@@ -58,13 +58,13 @@ public class SendLiveRoomMsg implements SendMessage {
                                 if(CollectionUtils.isEmpty(goodsList)){
                                     activityList.remove(i);
                                 }
-                            }
+                            }*/
                             if(liveCodeList.size()==1 && liveCodeList.contains(liveCode)){
                                 log.info("待提醒的直播间正是用户所在的直播间！");
                                 return;
                             }else{
-                                log.info("处理之后的直播间数据：{}",JSON.toJSONString(activityStartScoketMsgBO));
-                                this.sendMsg(webSocketMsgModel,activityStartScoketMsgBO,wid);
+                                /*log.info("处理之后的直播间数据：{}",JSON.toJSONString(activityStartScoketMsgBO));
+                                this.sendMsg(webSocketMsgModel,activityStartScoketMsgBO,wid);*/
                                 return;
                             }
                         }
@@ -86,7 +86,7 @@ public class SendLiveRoomMsg implements SendMessage {
             response = new WebSocketMsgModel(webSocketMsgModel.getMsgType(), object);
         }
         String jsonData = JSON.toJSONString(response);
-        log.info("消息类型：{}，消息内容：{}", ConstantEnum.getByInt(webSocketMsgModel.getMsgType()),jsonData);
+        log.info("消息类型：{}，消息内容：{}", WebSocketMsgTypeEnum.getByInt(webSocketMsgModel.getMsgType()),jsonData);
         log.info("通过通道：{}，wid:{}，发送：{}",NettyConnectionUtil.userChannelMap.get(wid),wid,jsonData);
         NettyConnectionUtil.userChannelMap.get(wid).writeAndFlush(new TextWebSocketFrame(jsonData.replaceAll("\"","\'")));
     }

@@ -2,11 +2,17 @@ package com.ljl.note.collection.support.framework.util;
 
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.spi.CopyOnWrite;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * 通道、wid、liveCode绑定关系
+ */
 @Slf4j
 public class NettyConnectionUtil {
 
@@ -21,11 +27,11 @@ public class NettyConnectionUtil {
     //channel 和 liveCode的绑定关系
     public static Map<String,String> channelRoomId;//通道id-场次liveCode
     static{
-        userChannelMap = new HashMap<>();
-        channelUserMap = new HashMap<>();
-        roomChannelId = new HashMap<>();
-        channelRoomId = new HashMap<>();
-        userRoomMap = new HashMap<>();
+        userChannelMap = new ConcurrentHashMap<>();
+        channelUserMap = new ConcurrentHashMap<>();
+        roomChannelId = new ConcurrentHashMap<>();
+        channelRoomId = new ConcurrentHashMap<>();
+        userRoomMap = new ConcurrentHashMap<>();
     }
 
     public static void userAddInRoom(Long wid,ChannelHandlerContext context){
@@ -78,5 +84,6 @@ public class NettyConnectionUtil {
         if(remove != null){
             userChannelMap.remove(remove);
         }
+        ctx.channel().close();
     }
 }

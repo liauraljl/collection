@@ -1,10 +1,11 @@
-package com.ljl.note.collection.common.utils;
+package com.ljl.note.collection.support.common;
 
+
+import org.springframework.stereotype.Service;
 
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import org.springframework.stereotype.Service;
 
 
 /**

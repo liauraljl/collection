@@ -5,3 +5,17 @@ server:
 spring:
   application:
     name: support-service
+
+redis:
+  cache:
+    timeout: 60
+  database: 0
+  host: 127.0.0.1
+  password: 123456
+  pool:
+    maxActive: 200
+    maxIdle: 8
+    maxWait: 3000
+    minIdle: 1
+  port: 6379
+  timeout: 2000

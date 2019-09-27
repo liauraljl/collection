@@ -48,7 +48,7 @@ public class AllExecuteLoadBalance extends AbstractLoadBalance {
     }
 
     protected <T> void executeAllInvoker(List<Invoker<T>> invokers,int offset,Invocation invocation){
-        ArrayList<String> methods = Lists.newArrayList("sendmsgtowebsocket");
+        ArrayList<String> methods = Lists.newArrayList("sendmsgtowebsocket","getwidfromwebsocket");
         if(invokers.size()>1 && methods.contains(invocation.getMethodName().toLowerCase())){
             for(int i=0;i<invokers.size();i++){
                 if(i != offset){

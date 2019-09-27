@@ -30,42 +30,39 @@ public class WebsocketServer {
 
     @PostConstruct
     public void nettyMain(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int port = 8888;
-                NioEventLoopGroup boss = new NioEventLoopGroup();
-                NioEventLoopGroup work = new NioEventLoopGroup();
-                ServerBootstrap serverBootstrap = new ServerBootstrap();
-                serverBootstrap.group(boss,work);
-                serverBootstrap.channel(NioServerSocketChannel.class);
-                serverBootstrap.option(ChannelOption.SO_KEEPALIVE, true);
-                serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel ch) throws Exception {
-                        ChannelPipeline pipeline = ch.pipeline();
-                        //SSLContext sslContext = SslUtil.createSSLContext("JKS","D://wss.jks","netty123");
-                        //SSLEngine engine = sslContext.createSSLEngine();
-                        //engine.setUseClientMode(false);
-                        //ch.pipeline().addLast(new SslHandler(engine));
-                        pipeline.addLast(new IdleStateHandler(30,0,0, TimeUnit.SECONDS));
-                        pipeline.addLast(new HttpServerCodec());
-                        pipeline.addLast(new ChunkedWriteHandler());
-                        pipeline.addLast(new HttpObjectAggregator(65536));
-                        pipeline.addLast(new WebSocketServerProtocolHandler("/plugin/live/mob/ws/live/"));
-                        pipeline.addLast(websocketHandler);
-                    }
-                });
-                try {
-                    ChannelFuture sync = serverBootstrap.bind(port).sync();
-                    log.info("netty启动websocket服务端，占用端口：{}",port);
-                    sync.channel().closeFuture().sync();
-                } catch (InterruptedException e) {
-                    log.error("netty启动websocket服务端报错！");
-                }finally {
-                    boss.shutdownGracefully();
-                    work.shutdownGracefully();
+        new Thread(() -> {
+            int port = 8888;
+            NioEventLoopGroup boss = new NioEventLoopGroup();
+            NioEventLoopGroup work = new NioEventLoopGroup();
+            ServerBootstrap serverBootstrap = new ServerBootstrap();
+            serverBootstrap.group(boss,work);
+            serverBootstrap.channel(NioServerSocketChannel.class);
+            serverBootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+            serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
+                @Override
+                protected void initChannel(SocketChannel ch) throws Exception {
+                    ChannelPipeline pipeline = ch.pipeline();
+                    //SSLContext sslContext = SslUtil.createSSLContext("JKS","D://wss.jks","netty123");
+                    //SSLEngine engine = sslContext.createSSLEngine();
+                    //engine.setUseClientMode(false);
+                    //ch.pipeline().addLast(new SslHandler(engine));
+                    pipeline.addLast(new IdleStateHandler(30,0,0, TimeUnit.SECONDS));
+                    pipeline.addLast(new HttpServerCodec());
+                    pipeline.addLast(new ChunkedWriteHandler());
+                    pipeline.addLast(new HttpObjectAggregator(65536));
+                    pipeline.addLast(new WebSocketServerProtocolHandler("/plugin/live/mob/ws/live/"));
+                    pipeline.addLast(websocketHandler);
                 }
+            });
+            try {
+                ChannelFuture sync = serverBootstrap.bind(port).sync();
+                log.info("netty启动websocket服务端，占用端口：{}",port);
+                sync.channel().closeFuture().sync();
+            } catch (InterruptedException e) {
+                log.error("netty启动websocket服务端报错！");
+            }finally {
+                boss.shutdownGracefully();
+                work.shutdownGracefully();
             }
         }).start();
     }

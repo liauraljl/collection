@@ -2,13 +2,13 @@ package com.ljl.note.collection.support.domain.enums;
 
 import lombok.Getter;
 
-public enum ConstantEnum {
+public enum WebSocketMsgTypeEnum {
     HEART(0,"HEART"),
     AUTH(1,"AUTH"),
-    INROOM(2,"INROOM"),
+    INAPPLET(2,"INAPPLET"),
     INLIVEROOM(3,"INLIVEROOM"),
     OUTLIVEROOM(4,"OUTLIVEROOM"),
-    OUTROOM(5,"OUTROOM"),
+    OUTAPPLET(5,"OUTAPPLET"),
     /**-----------------华丽分割线-----------------*/
     FRESH(6,"刷新好物榜"),
     BARGAINACTIV(7,"砍价活动提醒"),
@@ -17,26 +17,26 @@ public enum ConstantEnum {
     ROOMACTIVITYSTAT(10,"直播间活动状态"),
     ROOMACTIVITYRESTPERSON(11,"直播间活动剩余名额");
     @Getter
-    int i;
+    private int type;
     @Getter
-    String s;
-    ConstantEnum(int i, String s){
-        this.i = i;
-        this.s = s;
+    private String desc;
+    WebSocketMsgTypeEnum(int type, String desc){
+        this.type = type;
+        this.desc = desc;
     }
 
-    public static ConstantEnum of(String s) {
-        for (ConstantEnum actionEnum : ConstantEnum.values()) {
-            if (actionEnum.s.equals(s) ) {
+    public static WebSocketMsgTypeEnum of(String s) {
+        for (WebSocketMsgTypeEnum actionEnum : WebSocketMsgTypeEnum.values()) {
+            if (actionEnum.desc.equals(s) ) {
                 return actionEnum;
             }
         }
         return AUTH;
     }
 
-    public static ConstantEnum getByInt(Integer s) {
-        for (ConstantEnum actionEnum : ConstantEnum.values()) {
-            if (actionEnum.i == s ) {
+    public static WebSocketMsgTypeEnum getByInt(int type) {
+        for (WebSocketMsgTypeEnum actionEnum : WebSocketMsgTypeEnum.values()) {
+            if (actionEnum.type == type ) {
                 return actionEnum;
             }
         }

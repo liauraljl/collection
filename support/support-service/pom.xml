@@ -30,6 +30,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba.spring.boot</groupId>
+            <artifactId>dubbo-spring-boot-starter</artifactId>
+            <version>2.0.0</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -40,7 +45,7 @@
         <dependency>
             <groupId>apache-log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.15</version>
+            <version>${log4j.version}</version>
         </dependency>
 
         <dependency>
@@ -52,7 +57,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.20.Final</version>
+            <version>${nety.version}</version>
         </dependency>
 
         <dependency>
@@ -65,6 +70,39 @@
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
         </dependency>
+
+        <!-- redis start-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${jedis.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>jackson-annotations</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>jackson-core</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>jackson-databind</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+        </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>${redisson.version}</version>
+        </dependency>
+        <!-- redis end-->
     </dependencies>
 
 </project>

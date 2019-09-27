@@ -30,6 +30,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.spring.boot</groupId>
+            <artifactId>dubbo-spring-boot-starter</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-1.2-api</artifactId>

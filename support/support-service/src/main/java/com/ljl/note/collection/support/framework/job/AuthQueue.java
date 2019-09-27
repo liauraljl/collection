@@ -27,22 +27,19 @@ public class AuthQueue {
 
     @PostConstruct
     public void authCheck(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true){
-                    AuthTask task = null;
-                    try {
-                        task = delayQueue.take();
-                        log.info("删除消息{}",task);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if(task.getContext() != null){
-                        log.info("通道id{}",task.getContext());
-                        authMap.remove(task.getContext().channel().id().asLongText());
-                        task.getContext().channel().close();
-                    }
+        new Thread(() -> {
+            while(true){
+                AuthTask task = null;
+                try {
+                    task = delayQueue.take();
+                    log.info("删除消息{}",task);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if(task.getContext() != null){
+                    log.info("通道id{}",task.getContext());
+                    authMap.remove(task.getContext().channel().id().asLongText());
+                    task.getContext().channel().close();
                 }
             }
         }).start();

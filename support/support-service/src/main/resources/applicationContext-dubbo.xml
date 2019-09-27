@@ -18,11 +18,9 @@
 
 
     <!--对外提供的Dubbo服务-->
-    <!--<dubbo:service interface="com.stylefeng.guns.api.film.service.FilmExport" ref="filmExportImpl"
-                                                  timeout="5000"/>-->
-
-    <!-- 引用的Dubbo服务 -->
-    <!--<dubbo:reference id="userImpl" interfaUserAPIrAPI" retries="0"
-                     check="false" timeout="5000"/>-->
-
+    <dubbo:service interface="com.ljl.note.collection.support.service.SupportToolsExport" ref="supportToolsExport" timeout="5000">
+        <!-- 重写dubbo负载均衡-->
+        <dubbo:method name="sendMsgToWebsocket" loadbalance="allExecute" />
+        <dubbo:method name="getWidFromWebsocket" loadbalance="allExecute" />
+    </dubbo:service>
 </beans>

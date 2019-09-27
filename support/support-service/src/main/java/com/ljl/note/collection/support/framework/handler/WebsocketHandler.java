@@ -1,5 +1,11 @@
 package com.ljl.note.collection.support.framework.handler;
 
+import com.ljl.note.collection.support.common.RedisService;
+import com.ljl.note.collection.support.domain.enums.WebSocketMsgTypeEnum;
+import com.ljl.note.collection.support.framework.job.AuthQueue;
+import com.ljl.note.collection.support.framework.job.AuthTask;
+import com.ljl.note.collection.support.common.RedisKeyConstant;
+import com.ljl.note.collection.support.framework.util.NettyConnectionUtil;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -16,7 +22,7 @@ import java.util.Arrays;
 @Slf4j
 public class WebsocketHandler extends SelfHandler<TextWebSocketFrame> {
     @Autowired
-    private RedisUtil redisUtil;
+    private RedisService redisService;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
@@ -28,31 +34,31 @@ public class WebsocketHandler extends SelfHandler<TextWebSocketFrame> {
         if(typeAndContent==null || typeAndContent.length!=2){
             ctx.channel().close();
         }else{
-            switch (ConstantEnum.of(typeAndContent[0])){
+            switch (WebSocketMsgTypeEnum.of(typeAndContent[0])){
                 case AUTH:
                     String tokenKey = String.format(RedisKeyConstant.AUTHKEY,typeAndContent[1]);
-                    if(tokenKey.equals(redisUtil.getString(tokenKey))){
+                    if(tokenKey.equals(redisService.get(tokenKey))){
                     //if(typeAndContent[1].equals("test")){
                          log.info("入站消息：{}",typeAndContent[1]);
                          AuthQueue.removeId(ctx.channel().id().asLongText());
                          NettyConnectionUtil.channelUserMap.put(ctx.channel().id().asLongText(),0L);
                     }else{
-                        log.info("权限校验失败 key:{},value:{}",tokenKey,redisUtil.getString(tokenKey));
+                        log.info("权限校验失败 key:{},value:{}",tokenKey,redisService.get(tokenKey));
                     }
                     break;
-                case INROOM:
+                case INAPPLET:
                     log.info("进入小程序,wid,{}",typeAndContent[1]);
                     NettyConnectionUtil.userAddInRoom(Long.parseLong(typeAndContent[1]),ctx);
                     break;
                 case INLIVEROOM:
-                    log.info("进入场次：{}",typeAndContent[1]);
+                    log.info("进入直播场次：{}",typeAndContent[1]);
                     NettyConnectionUtil.userAddInLiveRoom(typeAndContent[1],ctx);
                     break;
                 case OUTLIVEROOM:
-                    log.info("退出场次：{}",typeAndContent[1]);
+                    log.info("退出直播场次：{}",typeAndContent[1]);
                     NettyConnectionUtil.userOutLiveRoom(ctx);
                     break;
-                case OUTROOM:
+                case OUTAPPLET:
                     log.info("退出小程序：{}",typeAndContent[1]);
                     NettyConnectionUtil.userOutRoom(ctx);
                     break;
