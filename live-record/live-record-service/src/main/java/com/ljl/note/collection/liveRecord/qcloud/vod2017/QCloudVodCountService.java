@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ljl.note.collection.common.exception.BaseErrorCode;
+import com.ljl.note.collection.common.exception.BaseException;
 import com.ljl.note.collection.common.exception.BizException;
 import com.ljl.note.collection.common.utils.DateUtils;
 import com.ljl.note.collection.common.utils.HttpRequestUtil;
@@ -48,20 +49,20 @@ public class QCloudVodCountService {
         TreeMap<String, String> params = new TreeMap<String, String>();
         params.put("Action","GetPlayStatLogList");
         Date date = LocalDateTimeUtil.toDate(LocalDateTimeUtil.toLocalDateTime(new Date()).minusDays(1));
-        String dateStr= DateUtils.dateToString(date,"yyyy-MM-dd");
+        String dateStr= DateUtils.dateToStr(date,"yyyy-MM-dd");
         params.put("from",dateStr);// 昨日
         //params.put("from","2019-08-25");// 昨日
         params.put("to",dateStr);// 昨日
         params.put("SecretId",secretId);
         params.put("Region","sh");
         params.put("Timestamp",String.valueOf(System.currentTimeMillis()/1000));
-        params.put("Nonce",String.valueOf(new Random().nextInt(Integer.MAX_VALUE)));
+        params.put("Nonce",String.valueOf(new Random().nextInt(java.lang.Integer.MAX_VALUE)));
         params.put("SignatureMethod",SIGNATUREMETHOD);
         try {
             String fileUrl="";
             params.put("Signature", sign(getStringToSign(params), secretKey, SIGNATUREMETHOD));
             String url = getUrl(params);
-            String response= HttpRequestUtil.get(url);
+            String response=HttpRequestUtil.get(url);
             log.info("getPlayStatLogList request:{},response:{}", JSON.toJSONString(params),response);
             JSONObject jsonObject=JSON.parseObject(response);
             if(jsonObject.containsKey("fileList")){
@@ -74,7 +75,7 @@ public class QCloudVodCountService {
             return fileUrl;
         } catch (Exception e) {
             log.error("getPlayStatLogList error!",e.getMessage());
-            throw new BizException(BaseErrorCode.LIVERECORD_GETPLAYSTATLOGLIST_ERROR);
+            throw new BaseException(BaseErrorCode.LIVERECORD_GETPLAYSTATLOGLIST_ERROR);
         }
     }
 

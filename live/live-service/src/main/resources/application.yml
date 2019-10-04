@@ -1,10 +1,10 @@
 
 server:
-  port: 8095
+  port: 8094
 
 spring:
   application:
-    name: live-record-service
+    name: live-service
 
 redis:
   cache:

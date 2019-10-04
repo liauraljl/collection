@@ -1,6 +1,7 @@
 package com.ljl.note.collection.liveRecord.qcloud.sdk2018;
 
 import com.alibaba.fastjson.JSON;
+import com.ljl.note.collection.common.exception.BaseException;
 import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import com.tencentcloudapi.common.profile.ClientProfile;
@@ -24,7 +25,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class QCloudLiveRecordService {
-
     @Value("${qcloud.secretId}")
     private String secretId;
 
@@ -53,8 +53,8 @@ public class QCloudLiveRecordService {
             log.info("CreateLiveRecord success!request:{},response:{}",JSON.toJSONString(request),JSON.toJSONString(resp));
             return resp;
         } catch (TencentCloudSDKException e) {
-            log.error("CreateLiveRecord error!:request:{},error:{}", JSON.toJSONString(request),e.getMessage());
-            throw new BizException(BaseErrorCode.CREATE_LIVERECORDTASK_FAILED);
+            log.error("CreateLiveRecord error!request:{},error:{}", JSON.toJSONString(request),e.getMessage());
+            throw new BaseException(BaseErrorCode.CREATE_LIVERECORDTASK_FAILED);
         }
     }
 
@@ -74,7 +74,7 @@ public class QCloudLiveRecordService {
             return true;
         } catch (TencentCloudSDKException e) {
             log.error("StopLiveRecord error!:request:{},error:{}", JSON.toJSONString(request),e.getMessage());
-            throw new BizException(BaseErrorCode.END_LIVERECORDTASK_FAILED);
+            throw new BaseException(BaseErrorCode.END_LIVERECORDTASK_FAILED);
         }
     }
 
@@ -96,7 +96,7 @@ public class QCloudLiveRecordService {
             return resp;
         } catch (TencentCloudSDKException e) {
             log.error("SearchMedia error!:request:{},error:{}", JSON.toJSONString(request),e.getMessage());
-            throw new BizException(BaseErrorCode.SEARCHMEDIA_FAILED);
+            throw new BaseException(BaseErrorCode.SEARCHMEDIA_FAILED);
         }
     }
 
@@ -116,7 +116,7 @@ public class QCloudLiveRecordService {
             return resp;
         } catch (TencentCloudSDKException e) {
             log.error("EditMedia error!:request:{},error:{}", JSON.toJSONString(request),e.getMessage());
-            throw new BizException(BaseErrorCode.EDITMEDIA_FAILED);
+            throw new BaseException(BaseErrorCode.EDITMEDIA_FAILED);
         }
     }
 
@@ -138,7 +138,7 @@ public class QCloudLiveRecordService {
             return resp;
         } catch (TencentCloudSDKException e) {
             log.error("DescribeTaskDetail error!:request:{},error:{}", JSON.toJSONString(request),e.getMessage());
-            throw new BizException(BaseErrorCode.DESCRIBETASKDETAIL_FAILED);
+            throw new BaseException(BaseErrorCode.DESCRIBETASKDETAIL_FAILED);
         }
 
     }
@@ -159,7 +159,7 @@ public class QCloudLiveRecordService {
             return resp;
         } catch (TencentCloudSDKException e) {
             log.error("DescribeMediaInfos error!:request:{},error:{}", JSON.toJSONString(request),e.getMessage());
-            throw new BizException(BaseErrorCode.DESCRIBEMEDIAINFOS_FAILED);
+            throw new BaseException(BaseErrorCode.DESCRIBEMEDIAINFOS_FAILED);
         }
     }
 
@@ -179,7 +179,7 @@ public class QCloudLiveRecordService {
             return resp;
         } catch (TencentCloudSDKException e) {
             log.error("DeleteMedia error!:request:{},error:{}", JSON.toJSONString(request),e.getMessage());
-            throw new BizException(BaseErrorCode.DELETEMEDIA_FAILED);
+            throw new BaseException(BaseErrorCode.DELETEMEDIA_FAILED);
         }
     }
 }

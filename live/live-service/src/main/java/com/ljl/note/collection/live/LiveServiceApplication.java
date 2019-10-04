@@ -1,4 +1,4 @@
-package com.ljl.note.collection;
+package com.ljl.note.collection.live;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

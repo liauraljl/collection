@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ljl.note.collection.liveRecord.mapper.LiveRecordMapper">
+  <resultMap id="BaseResultMap" type="com.ljl.note.collection.liveRecord.model.LiveRecord">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pid" jdbcType="BIGINT" property="pid" />
+    <result column="live_room_id" jdbcType="BIGINT" property="liveRoomId" />
+    <result column="room_id" jdbcType="BIGINT" property="roomId" />
+    <result column="record_task_id" jdbcType="INTEGER" property="recordTaskId" />
+    <result column="merge_task_id" jdbcType="VARCHAR" property="mergeTaskId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="share_title" jdbcType="VARCHAR" property="shareTitle" />
+    <result column="total_duration" jdbcType="FLOAT" property="totalDuration" />
+    <result column="total_file_size" jdbcType="BIGINT" property="totalFileSize" />
+    <result column="video_download_url" jdbcType="VARCHAR" property="videoDownloadUrl" />
+    <result column="default_cover" jdbcType="VARCHAR" property="defaultCover" />
+    <result column="customize_cover" jdbcType="VARCHAR" property="customizeCover" />
+    <result column="default_share_photo" jdbcType="VARCHAR" property="defaultSharePhoto" />
+    <result column="customize_share_photo" jdbcType="VARCHAR" property="customizeSharePhoto" />
+    <result column="record_task_status" jdbcType="BIT" property="recordTaskStatus" />
+    <result column="cus_open_flag" jdbcType="BIT" property="cusOpenFlag" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="deteled" jdbcType="BIT" property="deleted" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="applet_type" jdbcType="BIT" property="appletType" />
+    <result column="store_id" jdbcType="BIGINT" property="storeId" />
+  </resultMap>
+
+  <update id="deleteRecordByIds" parameterType="java.util.List">
+    update t_live_record t set t.deleted = 1
+    where t.id in
+    <foreach collection="liveRecordIds" separator="," item="item" index="index" open="(" close=")">
+      #{item}
+    </foreach>
+    and t.deleted = 0
+  </update>
+
+</mapper>

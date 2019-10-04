@@ -11,13 +11,22 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class DateUtils {
-    public static final String formatPattern = "yyyy-MM-dd";
-    public static final String formatPattern_Short = "yyyyMMdd";
-    public static final String formatPattern_chinese = "yyyy年MM月dd日";
-    public static final String FORMAT_PATTERN_MEDIUM = "yyyy-MM-dd HH:mm:ss";
-    public static final String[] WEEK_DAYS = new String[]{"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
-
     public DateUtils() {
+    }
+
+    /**
+     * 日期转换成指定格式的字符串
+     * <pre>
+     * DateUtil.dateToStr(new Date(),"yyyy-MM-dd HH:mm:ss")   =2016-04-12 11:51:24
+     * </pre>
+     *
+     * @param date
+     * @return
+     */
+    public static String dateToStr(Date date, String formatStr) {
+        SimpleDateFormat format = new SimpleDateFormat(formatStr);
+        String str = format.format(date);
+        return str;
     }
 
     public static Date strToDate(String time) throws ParseException {
@@ -68,12 +77,6 @@ public class DateUtils {
         cal.clear(13);
         cal.clear(14);
         return cal.getTime();
-    }
-
-    public static Date getThisYearLastDate() {
-        Calendar cal = GregorianCalendar.getInstance();
-        GregorianCalendar d = new GregorianCalendar(cal.get(1), 11, 31, 23, 59, 59);
-        return d.getTime();
     }
 
     public static Date getRoundedDayCurDate() {
@@ -128,13 +131,6 @@ public class DateUtils {
         return firstCal.getActualMaximum(5) < cal.get(5)?(new GregorianCalendar(cal.get(1), cal.get(2) + n.intValue(), firstCal.getActualMaximum(5))).getTime():(new GregorianCalendar(cal.get(1), cal.get(2) + n.intValue(), cal.get(5))).getTime();
     }
 
-    public static Date getNextHour(Date dt) {
-        Calendar cal = new GregorianCalendar();
-        cal.setTime(dt);
-        cal.set(11, cal.get(11) + 1);
-        return cal.getTime();
-    }
-
     public static long getBetweenDate(Date startDate, Date endDate) {
         long startDateTime = startDate.getTime();
         long endDateTime = endDate.getTime();
@@ -146,7 +142,7 @@ public class DateUtils {
     public static long getMonthLength(String countDate) throws ParseException {
         String firstDay = countDate.substring(0, countDate.length() - 2) + "01";
         Date startDate = strToDate(firstDay);
-        Date endDate = getNextMonth(startDate, Long.valueOf(1L));
+        Date endDate = getNextMonth(startDate, new Long(1L));
         long startDateTime = startDate.getTime();
         long endDateTime = endDate.getTime();
         long dayTime = 86400000L;
@@ -162,32 +158,6 @@ public class DateUtils {
     public static final Date getNextDays(int days) {
         Calendar cal = GregorianCalendar.getInstance();
         return (new GregorianCalendar(cal.get(1), cal.get(2), cal.get(5) - days)).getTime();
-    }
-
-    public static final Date getLastDateByHours(int hours) {
-        Calendar cal = GregorianCalendar.getInstance();
-        cal.add(10, -hours);
-        return cal.getTime();
-    }
-
-    public static final Date getLastDateByHours(Date date, int hours) {
-        Calendar cal = GregorianCalendar.getInstance();
-        cal.setTime(date);
-        cal.add(10, -hours);
-        return cal.getTime();
-    }
-
-    public static final Date getLastDateByMins(int mins) {
-        Calendar cal = GregorianCalendar.getInstance();
-        cal.add(12, -mins);
-        return cal.getTime();
-    }
-
-    public static final Date getLastDateByMins(Date date, int mins) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.add(12, -mins);
-        return cal.getTime();
     }
 
     public static Timestamp convertSqlDate(Date dt) {
@@ -248,29 +218,24 @@ public class DateUtils {
         }
     }
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) {
         Date date = getDate(20060131);
         String registerTime = formatDate(new Date(), "yyyy-MM-dd HH:mm:ss");
         System.out.println(registerTime);
-        int space = getMonthSpace(getDate(20150106), getDate(20151221));
-        System.out.println(space);
-        System.out.println(getStartOfDate(new Date()));
-        System.out.println("last day of month" + getMonthLast(11));
-        System.out.println(getPrefixDate("1"));
     }
 
     public static int compareDate(Date date1, Date date2, int precision) {
         Calendar c = Calendar.getInstance();
         List<Integer> fields = new ArrayList();
-        fields.add(Integer.valueOf(1));
-        fields.add(Integer.valueOf(2));
-        fields.add(Integer.valueOf(5));
-        fields.add(Integer.valueOf(12));
-        fields.add(Integer.valueOf(13));
-        fields.add(Integer.valueOf(14));
+        fields.add(new Integer(1));
+        fields.add(new Integer(2));
+        fields.add(new Integer(5));
+        fields.add(new Integer(12));
+        fields.add(new Integer(13));
+        fields.add(new Integer(14));
         Date d1 = date1;
         Date d2 = date2;
-        if(fields.contains(Integer.valueOf(precision))) {
+        if(fields.contains(new Integer(precision))) {
             c.setTime(date1);
 
             int i;
@@ -306,12 +271,6 @@ public class DateUtils {
         Calendar cal = new GregorianCalendar();
         cal.setTime(dt);
         return (new GregorianCalendar(cal.get(1), cal.get(2), cal.get(5) - n.intValue())).getTime();
-    }
-
-    public static Date getLastMonth(Date dt, Long n) {
-        Calendar cal = new GregorianCalendar();
-        cal.setTime(dt);
-        return (new GregorianCalendar(cal.get(1), cal.get(2) - n.intValue(), cal.get(5))).getTime();
     }
 
     public static Date getDateFromStr(String str, String format) {
@@ -508,183 +467,52 @@ public class DateUtils {
         return result;
     }
 
-    public static String getCurrentDate() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        return format.format(new Date());
-    }
-
-    public static String getDesignatedDate(long timeDiff) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        long nowTime = System.currentTimeMillis();
-        long designTime = nowTime - timeDiff;
-        return format.format(Long.valueOf(designTime));
-    }
-
-    public static String getPrefixDate(String count) {
-        Calendar cal = Calendar.getInstance();
-        int day = 0 - Integer.parseInt(count);
-        cal.add(5, day);
-        Date datNew = cal.getTime();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        return format.format(datNew);
-    }
-
-    public static String dateToString(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        return format.format(date);
-    }
-
-    public static String dateToString(Date date, String formatPattern) {
-        SimpleDateFormat format = new SimpleDateFormat(formatPattern);
-        return format.format(date);
-    }
-
-    public static Date stringToDate(String str) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        if(!str.equals("") && str != null) {
-            try {
-                return format.parse(str);
-            } catch (ParseException var3) {
-                var3.printStackTrace();
-            }
-        }
-
-        return null;
-    }
-
-    /*public static boolean timeSubtract(String date1, String date2) {
-        SimpleDateFormat dfs = new SimpleDateFormat("HH:mm");
-        Date begin = null;
-        Date end = null;
-
-        try {
-            begin = dfs.parse(date1);
-            end = dfs.parse(date2);
-            return begin.before(end);
-        } catch (ParseException var7) {
-            String msg = String.format("Exception when try to timeSubtract date1 %s, date2 %s: %s", new Object[]{date1, date2, var7.getMessage()});
-            throw new UtilityRuntimeException(msg, var7);
-        }
-    }*/
-
-    public static Date getFistYearAgo(Date dt, Long n) {
-        Calendar cal = new GregorianCalendar();
-        cal.setTime(dt);
-        return (new GregorianCalendar(cal.get(1) - n.intValue(), 0, 1)).getTime();
-    }
-
-    public static Date getLastYearAgo(Date dt, Long n) {
-        Calendar cal = new GregorianCalendar();
-        cal.setTime(dt);
-        return (new GregorianCalendar(cal.get(1) - n.intValue(), 11, 31)).getTime();
-    }
-
-    public static int getMonthSpace(Date dateBegin, Date dateEnd) {
-        try {
-            long startDateTime = dateBegin.getTime();
-            long endDateTime = dateEnd.getTime();
-            long dayTime = 86400000L;
-            double days = (double)(Math.abs(endDateTime - startDateTime) / dayTime);
-            int month = (int)Math.ceil(days / 30.0D);
-            return month;
-        } catch (Exception var11) {
-            return 2147483647;
-        }
-    }
-
-    public static int getSecondSpace(Date dateBegin, Date dateEnd) {
-        long startDateTime = dateBegin.getTime();
-        long endDateTime = dateEnd.getTime();
-        long secondTime = 1000L;
-        double seconds = (double)(Math.abs(endDateTime - startDateTime) / secondTime);
-        int result = (int)Math.ceil(seconds);
-        return result;
-    }
-
-    public static Date getStartOfDate(Date date) {
+    public static Date getFistTimeOfDate(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        calendar.clear(9);
-        calendar.clear(10);
-        calendar.clear(11);
-        calendar.clear(12);
-        calendar.clear(13);
-        calendar.clear(14);
+        calendar.set(11, 0);
+        calendar.set(12, 0);
+        calendar.set(13, 0);
         return calendar.getTime();
     }
 
-    public static Date getStartOfNextDate(Date date) {
+    public static String getCurrentDayString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd");
+        return sdf.format(new Date());
+    }
+
+    public static int getMonth(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        calendar.clear(9);
-        calendar.clear(10);
-        calendar.clear(11);
-        calendar.clear(12);
-        calendar.clear(13);
-        calendar.clear(14);
-        calendar.add(5, 1);
-        return calendar.getTime();
+        return calendar.get(2) + 1;
     }
 
-    public static String getLeftTimeString(Date deadDate) {
-        Date currentDate = new Date();
-        long diff = (deadDate.getTime() - currentDate.getTime()) / 1000L;
-        if(diff <= 0L) {
-            return "";
-        } else {
-            long second = diff % 60L;
-            long minute = diff / 60L % 60L;
-            long hour = diff / 3600L % 24L;
-            long day = diff / 86400L;
-            StringBuilder builder = new StringBuilder();
-            if(day > 0L) {
-                builder.append(day);
-                builder.append("天");
-            }
-
-            if(hour > 0L) {
-                builder.append(hour);
-                builder.append("小时");
-            }
-
-            if(minute > 0L) {
-                builder.append(minute);
-                builder.append("分");
-            }
-
-            builder.append(second);
-            builder.append("秒");
-            return builder.toString();
-        }
+    public static int getCurrentMonth() {
+        return getMonth(new Date());
     }
 
-    public static Date getCurrentYearLast() {
-        Calendar calendar = Calendar.getInstance();
-        int currentYear = calendar.get(1);
-        return getYearLast(currentYear);
-    }
-
-    public static Date getYearLast(int year) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.clear();
-        calendar.set(1, year);
-        calendar.roll(6, -1);
-        Date date = calendar.getTime();
-        return date;
-    }
-
-    public static Date getMonthLast(int month) {
+    public static Date getStartTimeOfMonth(int month) {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(1);
         calendar.clear();
         calendar.set(1, year);
         calendar.set(2, month - 1);
-        calendar.roll(5, -1);
-        Date date = calendar.getTime();
-        return date;
+        calendar.set(5, 1);
+        calendar.set(11, 0);
+        return calendar.getTime();
     }
 
-    public static String getWeekDayChinese(Date date) {
-        return WEEK_DAYS[date.getDay()];
+    public static Date getDateBefore(Date date, int day) {
+        Calendar now = Calendar.getInstance();
+        now.setTime(date);
+        now.set(5, now.get(5) - day);
+        return now.getTime();
+    }
+
+    public static Date getDateAfter(Date date, int day) {
+        Calendar now = Calendar.getInstance();
+        now.setTime(date);
+        now.set(5, now.get(5) + day);
+        return now.getTime();
     }
 }

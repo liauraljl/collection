@@ -27,7 +27,7 @@ public class WebsocketHandler extends SelfHandler<TextWebSocketFrame> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
         //处理不同类型的数据片段约定
-        //入站消息 AUTH_token    INROOM_wid   INLIVEROOM_livecode    OUTLIVEROOM_livecode   OUTROOM_wid
+        //入站消息 AUTH_token    INAPPLET_wid   INLIVEROOM_livecode    OUTLIVEROOM_livecode   OUTAPPLET_wid
         //出站消息 FRESH_goods   BARGAINACTIV_json  ROOMBARGAIN_3  ORDER_text
         String[] typeAndContent = msg.text().split("_");
         log.info(msg.text());
