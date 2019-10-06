@@ -33,10 +33,6 @@ public class LiveRecordTask {
     RedisTemplate redisTemplate;
 
     @Autowired
-    @Qualifier("searchLiveRecordVideoTaskExecutor")
-    private ThreadPoolTaskExecutor searchLiveRecordVideoTaskExecutor;
-
-    @Autowired
     @Qualifier("liveRecordMergeTaskExecutor")
     private ThreadPoolTaskExecutor liveRecordMergeTaskExecutor;
 
@@ -60,32 +56,34 @@ public class LiveRecordTask {
     private RedisService redisService;
 
     /**
-     * 延迟队列,获取录播视频文件
+     * 延迟队列,获取需要处理的录播任务,入队列
      */
     @Scheduled(cron = "0 */2 * * * ?")
-    public void searchLiveRecordVideoTask() {
+    public void searchLiveRecordVideoFromZSetTask() {
         try {
-            redisService.getLock(RedisKey.LIVERECORD_VIDEO_GET_LOCK);
-            log.info("searchLiveRecordVideoTask exec start");
+            redisService.getLock(RedisKey.LIVERECORD_VIDEO_INTOLIST_LOCK);
+            log.info("searchLiveRecordVideoFromZSetTask exec start");
             long maxScore = System.currentTimeMillis();
             long minScore = LocalDateTimeUtil.toDate(LocalDateTimeUtil.toLocalDateTime(new Date()).minusHours(1)).getTime();
-            Set<ZSetOperations.TypedTuple<Long>> liveRecordIdWithScores = redisTemplate.opsForZSet()
-                    .rangeByScoreWithScores(RedisKey.LIVERECORD_VIDEO_GET_QUEUE, minScore, maxScore, 0, -1);
-            for (ZSetOperations.TypedTuple<Long> zSetModel : liveRecordIdWithScores) {
+            Set<Long> liveRecordIds = redisTemplate.opsForZSet()
+                    .rangeByScore(RedisKey.LIVERECORD_VIDEO_GET_ZSET, minScore, maxScore, 0, -1);
+            /*for (ZSetOperations.TypedTuple<Long> zSetModel : liveRecordIdWithScores) {
                 searchLiveRecordVideoTaskExecutor.execute(() -> {
                     Boolean result = liveRecordService.mergeLiveRecord(Convert.toLong(zSetModel.getValue()));
                     if (result) {//未完成，1小时内重试
-                        redisTemplate.opsForZSet().remove(RedisKey.LIVERECORD_VIDEO_GET_QUEUE, zSetModel.getValue());
+                        redisTemplate.opsForZSet().remove(RedisKey.LIVERECORD_VIDEO_GET_ZSET, zSetModel.getValue());
                     }
                 });
-            }
-            log.info("searchLiveRecordVideoTask exec end");
+            }*/
+            redisTemplate.opsForList().leftPushAll(RedisKey.LIVERECORD_VIDEO_GET_LIST,liveRecordIds);
+            redisTemplate.opsForZSet().remove(RedisKey.LIVERECORD_VIDEO_GET_ZSET,liveRecordIds);
+            log.info("searchLiveRecordVideoFromZSetTask exec end");
         } catch (Exception e) {
-            log.info("searchLiveRecordVideoTask exec error");
+            log.info("searchLiveRecordVideoFromZSetTask exec error");
             e.printStackTrace();
         } finally {
             try {
-                redisService.unLock(RedisKey.LIVERECORD_VIDEO_GET_LOCK);
+                redisService.unLock(RedisKey.LIVERECORD_VIDEO_INTOLIST_LOCK);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -93,32 +91,26 @@ public class LiveRecordTask {
     }
 
     /**
-     * 延迟队列,处理视频合并任务
+     * 延迟队列,查询视频合并任务处理结果 入队列
      */
     @Scheduled(cron = "0 */2 * * * ?")
     public void mergeLiveRecordTaskHandleTask() {
         try {
-            redisService.getLock(RedisKey.LIVERECORD_VIDEO_MERGETASK_LOCK);
+            redisService.getLock(RedisKey.LIVERECORD_VIDEO_GETMERGE_INTOLIST_LOCK);
             log.info("mergeLiveRecordTaskHandleTask exec start");
             long maxScore = System.currentTimeMillis();
             long minScore = LocalDateTimeUtil.toDate(LocalDateTimeUtil.toLocalDateTime(new Date()).minusHours(1)).getTime();
-            Set<ZSetOperations.TypedTuple<Long>> liveRecordIdWithScores = redisTemplate.opsForZSet()
-                    .rangeByScoreWithScores(RedisKey.LIVERECORD_VIDEO_MERGETASK_QUEUE, minScore, maxScore, 0, -1);
-            for (ZSetOperations.TypedTuple<Long> zSetModel : liveRecordIdWithScores) {
-                liveRecordMergeTaskExecutor.execute(() -> {
-                    Boolean result = liveRecordService.queryMergeTaskResult(Convert.toLong(zSetModel.getValue()));
-                    if (result) {//未完成，1小时内重试
-                        redisTemplate.opsForZSet().remove(RedisKey.LIVERECORD_VIDEO_MERGETASK_QUEUE, zSetModel.getValue());
-                    }
-                });
-            }
+            Set<Long> liveRecordIds = redisTemplate.opsForZSet()
+                    .rangeByScore(RedisKey.LIVERECORD_VIDEO_GETMERGE_ZSET, minScore, maxScore, 0, -1);
+            redisTemplate.opsForList().leftPushAll(RedisKey.LIVERECORD_VIDEO_GETMERGE_LIST,liveRecordIds);
+            redisTemplate.opsForZSet().remove(RedisKey.LIVERECORD_VIDEO_GETMERGE_ZSET,liveRecordIds);
             log.info("mergeLiveRecordTaskHandleTask exec end");
         } catch (Exception e) {
             log.info("mergeLiveRecordTaskHandleTask exec error");
             e.printStackTrace();
         } finally {
             try {
-                redisService.unLock(RedisKey.LIVERECORD_VIDEO_MERGETASK_LOCK);
+                redisService.unLock(RedisKey.LIVERECORD_VIDEO_GETMERGE_INTOLIST_LOCK);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -24,6 +24,7 @@ import com.tencentcloudapi.live.v20180801.models.CreateLiveRecordRequest;
 import com.tencentcloudapi.live.v20180801.models.CreateLiveRecordResponse;
 import com.tencentcloudapi.live.v20180801.models.StopLiveRecordRequest;
 import com.tencentcloudapi.vod.v20180717.models.*;
+import jodd.typeconverter.Convert;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,6 +34,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
+
+import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -69,6 +72,14 @@ public class LiveRecordServiceImpl {
     @Autowired
     @Qualifier("liveRecordPartDeleteExecutor")
     private ThreadPoolTaskExecutor liveRecordPartDeleteExecutor;
+
+    @Autowired
+    @Qualifier("liveRecordMergeTaskExecutor")
+    private ThreadPoolTaskExecutor liveRecordMergeTaskExecutor;
+
+    @Autowired
+    @Qualifier("queryLiveRecordMergeResultExecutor")
+    private ThreadPoolTaskExecutor queryLiveRecordMergeResultExecutor;
 
     /**
      * 开始录播(是否存在录制中的文件和任务) (开始、恢复直播时调用)
@@ -160,7 +171,7 @@ public class LiveRecordServiceImpl {
             liveRecord.setEndTime(new Date());
             liveRecordMapper.updateByPrimaryKeySelective(liveRecord);
             long handleTime = LocalDateTimeUtil.toDate(LocalDateTimeUtil.toLocalDateTime(new Date()).plusMinutes(1)).getTime();
-            redisTemplate.opsForZSet().add(RedisKey.LIVERECORD_VIDEO_GET_QUEUE, liveRecord.getId(), handleTime);
+            redisTemplate.opsForZSet().add(RedisKey.LIVERECORD_VIDEO_GET_ZSET, liveRecord.getId(), handleTime);
         }
         return true;
     }
@@ -240,7 +251,7 @@ public class LiveRecordServiceImpl {
                         liveRecordMapper.updateByPrimaryKeySelective(liveRecord);
                         //延迟队列查询文件合并结果
                         long handleTime = LocalDateTimeUtil.toDate(LocalDateTimeUtil.toLocalDateTime(new Date()).plusMinutes(1)).getTime();
-                        redisTemplate.opsForZSet().add(RedisKey.LIVERECORD_VIDEO_MERGETASK_QUEUE, liveRecord.getId(), handleTime);
+                        redisTemplate.opsForZSet().add(RedisKey.LIVERECORD_VIDEO_GETMERGE_ZSET, liveRecord.getId(), handleTime);
                     }
                 }
             } catch (Exception e) {
@@ -289,7 +300,7 @@ public class LiveRecordServiceImpl {
         if (liveRecord.getRecordTaskStatus().equals(LiveRecordTaskStatusEnum.Merging.getType())) {
             try {
                 //double check解决重复提交任务问题
-                redisService.getLock(String.format(RedisKey.LIVERECORD_VIDEO_MERGETASK_LIVERECORD_LOCK, liveRecordId));
+                redisService.getLock(String.format(RedisKey.LIVERECORD_VIDEO_GETMERGE_LOCK, liveRecordId));
                 liveRecord = liveRecordMapper.selectByPrimaryKey(liveRecordId);
                 if (liveRecord.getRecordTaskStatus().equals(LiveRecordTaskStatusEnum.Merging.getType())) {
                     DescribeTaskDetailRequest describeTaskDetailRequest = new DescribeTaskDetailRequest();
@@ -320,7 +331,7 @@ public class LiveRecordServiceImpl {
             } catch (Exception e){
                 e.printStackTrace();
             }finally {
-                redisService.unLock(String.format(RedisKey.LIVERECORD_VIDEO_MERGETASK_LIVERECORD_LOCK, liveRecordId));
+                redisService.unLock(String.format(RedisKey.LIVERECORD_VIDEO_GETMERGE_LOCK, liveRecordId));
             }
         }
         return true;
@@ -412,6 +423,63 @@ public class LiveRecordServiceImpl {
         criteria.andEqualTo("recordTaskStatus", LiveRecordTaskStatusEnum.Finish.getType())
                 .andEqualTo("deleted", 0);
         return liveRecordMapper.selectByExample(example);
+    }
+
+    /**
+     * 获取录播视频任务
+     */
+    @PostConstruct
+    public void mergeLiveRecordFromListTask(){
+        new Thread(()->{
+            while (true){
+                try{
+                    Long liveRecordId= Convert.toLong(redisTemplate.opsForList().rightPop(RedisKey.LIVERECORD_VIDEO_GET_LIST,10,TimeUnit.SECONDS));
+                    String retryKey=String.format(RedisKey.LIVERECORD_VIDEO_GET_RETRY,liveRecordId);
+                    redisTemplate.opsForValue().set(retryKey,liveRecordId,1,TimeUnit.HOURS);
+                    //todo 引入限流
+                    Future<Boolean> mergeLiveRecordResult=liveRecordMergeTaskExecutor.submit(()-> mergeLiveRecord(liveRecordId));
+                    if(!mergeLiveRecordResult.get()){
+                        //失败重试
+                        if(redisTemplate.hasKey(retryKey)){
+                            redisTemplate.opsForList().leftPush(RedisKey.LIVERECORD_VIDEO_GET_LIST,liveRecordId);
+                        }
+                    }else{
+                        redisTemplate.delete(retryKey);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * 查询视频合并任务处理结果
+     */
+    @PostConstruct
+    public void getMergeResultFromListTask(){
+        new Thread(()->{
+            while (true){
+                try{
+                    Long liveRecordId=Convert.toLong(redisTemplate.opsForList().rightPop(RedisKey.LIVERECORD_VIDEO_GETMERGE_LIST,10,TimeUnit.SECONDS));
+                    String retryKey=String.format(RedisKey.LIVERECORD_VIDEO_GETMERGE_RETRY,liveRecordId);
+                    redisTemplate.opsForValue().set(retryKey,liveRecordId,1,TimeUnit.HOURS);
+                    //todo 引入限流
+                    Future<Boolean> getMergeResult=queryLiveRecordMergeResultExecutor.submit(()->queryMergeTaskResult(liveRecordId));
+                    if(!getMergeResult.get()){
+                        //失败重试
+                        if(redisTemplate.hasKey(retryKey)){
+                            redisTemplate.opsForList().leftPush(RedisKey.LIVERECORD_VIDEO_GETMERGE_LIST,liveRecordId);
+                        }
+                    }else{
+                        redisTemplate.delete(retryKey);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
     }
 }
 

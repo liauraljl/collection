@@ -9,18 +9,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 public class ThreadPoolConfig {
 
-    @Bean("searchLiveRecordVideoTaskExecutor")
-    public ThreadPoolTaskExecutor searchLiveRecordVideoTaskExecutor(){
-        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setCorePoolSize(20);
-        threadPoolTaskExecutor.setQueueCapacity(400);
-        threadPoolTaskExecutor.setMaxPoolSize(150);
-        threadPoolTaskExecutor.setKeepAliveSeconds(180);
-        threadPoolTaskExecutor.setThreadNamePrefix("searchLiveRecordVideoTaskExecutor");
-        threadPoolTaskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        return threadPoolTaskExecutor;
-    }
-
     @Bean("liveRecordMergeTaskExecutor")
     public ThreadPoolTaskExecutor liveRecordMergeTaskExecutor(){
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
@@ -29,6 +17,18 @@ public class ThreadPoolConfig {
         threadPoolTaskExecutor.setMaxPoolSize(150);
         threadPoolTaskExecutor.setKeepAliveSeconds(180);
         threadPoolTaskExecutor.setThreadNamePrefix("liveRecordMergeTaskExecutor");
+        threadPoolTaskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        return threadPoolTaskExecutor;
+    }
+
+    @Bean("queryLiveRecordMergeResultExecutor")
+    public ThreadPoolTaskExecutor queryLiveRecordMergeResultExecutor(){
+        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        threadPoolTaskExecutor.setCorePoolSize(20);
+        threadPoolTaskExecutor.setQueueCapacity(400);
+        threadPoolTaskExecutor.setMaxPoolSize(150);
+        threadPoolTaskExecutor.setKeepAliveSeconds(180);
+        threadPoolTaskExecutor.setThreadNamePrefix("queryLiveRecordMergeResultExecutor");
         threadPoolTaskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         return threadPoolTaskExecutor;
     }

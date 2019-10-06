@@ -32,7 +32,7 @@ public class DataSourceConfig {
         sessionFactoryBean.setDataSource(dataSource());
         sessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver()
                 .getResources("classpath:mapper/*.xml"));
-        sessionFactoryBean.setTypeAliasesPackage("com.ljl.example");
+        sessionFactoryBean.setTypeAliasesPackage("com.ljl.note.collection.liveRecord");
         return sessionFactoryBean.getObject();
     }
 	
