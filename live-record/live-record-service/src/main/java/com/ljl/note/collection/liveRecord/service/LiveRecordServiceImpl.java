@@ -435,16 +435,13 @@ public class LiveRecordServiceImpl {
                 try{
                     Long liveRecordId= Convert.toLong(redisTemplate.opsForList().rightPop(RedisKey.LIVERECORD_VIDEO_GET_LIST,10,TimeUnit.SECONDS));
                     String retryKey=String.format(RedisKey.LIVERECORD_VIDEO_GET_RETRY,liveRecordId);
-                    redisTemplate.opsForValue().set(retryKey,liveRecordId,1,TimeUnit.HOURS);
-                    //todo 引入限流
-                    Future<Boolean> mergeLiveRecordResult=liveRecordMergeTaskExecutor.submit(()-> mergeLiveRecord(liveRecordId));
-                    if(!mergeLiveRecordResult.get()){
-                        //失败重试
-                        if(redisTemplate.hasKey(retryKey)){
+                    if(redisTemplate.hasKey(retryKey)){
+                        //todo 引入限流
+                        Future<Boolean> mergeLiveRecordResult=liveRecordMergeTaskExecutor.submit(()-> mergeLiveRecord(liveRecordId));
+                        if(!mergeLiveRecordResult.get()){
+                            //失败重试
                             redisTemplate.opsForList().leftPush(RedisKey.LIVERECORD_VIDEO_GET_LIST,liveRecordId);
                         }
-                    }else{
-                        redisTemplate.delete(retryKey);
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -463,23 +460,21 @@ public class LiveRecordServiceImpl {
                 try{
                     Long liveRecordId=Convert.toLong(redisTemplate.opsForList().rightPop(RedisKey.LIVERECORD_VIDEO_GETMERGE_LIST,10,TimeUnit.SECONDS));
                     String retryKey=String.format(RedisKey.LIVERECORD_VIDEO_GETMERGE_RETRY,liveRecordId);
-                    redisTemplate.opsForValue().set(retryKey,liveRecordId,1,TimeUnit.HOURS);
-                    //todo 引入限流
-                    Future<Boolean> getMergeResult=queryLiveRecordMergeResultExecutor.submit(()->queryMergeTaskResult(liveRecordId));
-                    if(!getMergeResult.get()){
-                        //失败重试
-                        if(redisTemplate.hasKey(retryKey)){
-                            redisTemplate.opsForList().leftPush(RedisKey.LIVERECORD_VIDEO_GETMERGE_LIST,liveRecordId);
+                    if(redisTemplate.hasKey(retryKey)){
+                        //todo 引入限流
+                        Future<Boolean> getMergeResult=queryLiveRecordMergeResultExecutor.submit(()->queryMergeTaskResult(liveRecordId));
+                        if(!getMergeResult.get()){
+                            //失败重试
+                            if(redisTemplate.hasKey(retryKey)){
+                                redisTemplate.opsForList().leftPush(RedisKey.LIVERECORD_VIDEO_GETMERGE_LIST,liveRecordId);
+                            }
                         }
-                    }else{
-                        redisTemplate.delete(retryKey);
                     }
                 }catch (Exception e){
                     e.printStackTrace();
                 }
             }
         }).start();
-
     }
 }
 

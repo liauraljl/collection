@@ -1,5 +1,6 @@
 package com.ljl.note.collection.liveRecord.job;
 
+import com.google.common.primitives.Longs;
 import com.ljl.note.collection.common.utils.DateUtils;
 import com.ljl.note.collection.common.utils.GZIPUtil;
 import com.ljl.note.collection.common.utils.LocalDateTimeUtil;
@@ -15,8 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -31,10 +32,6 @@ public class LiveRecordTask {
 
     @Autowired
     RedisTemplate redisTemplate;
-
-    @Autowired
-    @Qualifier("liveRecordMergeTaskExecutor")
-    private ThreadPoolTaskExecutor liveRecordMergeTaskExecutor;
 
     @Autowired
     @Qualifier("liveRecordPartDeleteExecutor")
@@ -76,6 +73,14 @@ public class LiveRecordTask {
                 });
             }*/
             redisTemplate.opsForList().leftPushAll(RedisKey.LIVERECORD_VIDEO_GET_LIST,liveRecordIds);
+            redisTemplate.executePipelined((RedisCallback<Object>) redisConnection->{
+               redisConnection.openPipeline();
+               for(Long liveRecordId:liveRecordIds){
+                   redisConnection.setEx(String.format(RedisKey.LIVERECORD_VIDEO_GET_RETRY,liveRecordId).getBytes(),3600, Longs.toByteArray(liveRecordId));
+               }
+               redisConnection.closePipeline();
+               return null;
+            });
             redisTemplate.opsForZSet().remove(RedisKey.LIVERECORD_VIDEO_GET_ZSET,liveRecordIds);
             log.info("searchLiveRecordVideoFromZSetTask exec end");
         } catch (Exception e) {
@@ -103,6 +108,14 @@ public class LiveRecordTask {
             Set<Long> liveRecordIds = redisTemplate.opsForZSet()
                     .rangeByScore(RedisKey.LIVERECORD_VIDEO_GETMERGE_ZSET, minScore, maxScore, 0, -1);
             redisTemplate.opsForList().leftPushAll(RedisKey.LIVERECORD_VIDEO_GETMERGE_LIST,liveRecordIds);
+            redisTemplate.executePipelined((RedisCallback<Object>) redisConnection->{
+                redisConnection.openPipeline();
+                for(Long liveRecordId:liveRecordIds){
+                    redisConnection.setEx(String.format(RedisKey.LIVERECORD_VIDEO_GETMERGE_RETRY,liveRecordId).getBytes(),3600, Longs.toByteArray(liveRecordId));
+                }
+                redisConnection.closePipeline();
+                return null;
+            });
             redisTemplate.opsForZSet().remove(RedisKey.LIVERECORD_VIDEO_GETMERGE_ZSET,liveRecordIds);
             log.info("mergeLiveRecordTaskHandleTask exec end");
         } catch (Exception e) {
