@@ -1,6 +1,6 @@
 package com.ljl.note.collection.liveRecord.service;
 
-import com.ljl.note.collection.common.utils.SoaResponse;
+import com.ljl.note.collection.common.soa.SoaResponse;
 import com.ljl.note.collection.liveRecord.domain.dto.LiveRecordTaskEndDTO;
 import com.ljl.note.collection.liveRecord.domain.dto.LiveRecordTaskStartDTO;
 

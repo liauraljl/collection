@@ -1,16 +1,18 @@
 package com.ljl.note.collection.liveRecord.export;
 
-import com.ljl.note.collection.common.utils.SoaResponse;
+import com.ljl.note.collection.common.soa.SoaResponse;
 import com.ljl.note.collection.common.utils.SoaResponseUtil;
 import com.ljl.note.collection.liveRecord.domain.dto.LiveRecordTaskEndDTO;
 import com.ljl.note.collection.liveRecord.domain.dto.LiveRecordTaskStartDTO;
 import com.ljl.note.collection.liveRecord.facade.LiveRecordFacade;
 import com.ljl.note.collection.liveRecord.service.LiveRecordExport;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by liaura_ljl on 2019/10/4.
  */
+@Service
 public class LiveRecordExportImpl implements LiveRecordExport {
 
     @Autowired

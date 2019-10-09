@@ -1,5 +1,6 @@
 package com.ljl.note.collection.common.exception;
 
+import com.ljl.note.collection.common.enums.BaseErrorCode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

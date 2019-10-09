@@ -1,6 +1,6 @@
 package com.ljl.note.collection.support.service;
 
-import com.ljl.note.collection.common.utils.SoaResponse;
+import com.ljl.note.collection.common.soa.SoaResponse;
 import com.ljl.note.collection.support.domain.enums.WebSocketMsgTypeEnum;
 
 /**

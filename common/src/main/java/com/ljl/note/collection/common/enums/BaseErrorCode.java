@@ -1,4 +1,4 @@
-package com.ljl.note.collection.common.exception;
+package com.ljl.note.collection.common.enums;
 
 /**
  * 通用BaseErrorCode定义

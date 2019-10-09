@@ -1,6 +1,6 @@
 package com.ljl.note.collection.common.utils;
 
-import com.ljl.note.collection.common.exception.BaseErrorCode;
+import com.ljl.note.collection.common.enums.BaseErrorCode;
 import com.ljl.note.collection.common.exception.BizException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

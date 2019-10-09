@@ -4,7 +4,9 @@ import com.ljl.note.collection.liveRecord.domain.dto.LiveRecordTaskEndDTO;
 import com.ljl.note.collection.liveRecord.domain.dto.LiveRecordTaskStartDTO;
 import com.ljl.note.collection.liveRecord.service.LiveRecordServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class LiveRecordFacade {
 
     @Autowired

@@ -2,6 +2,8 @@ package com.ljl.note.collection.common.utils;
 
 import com.alibaba.dubbo.rpc.RpcException;
 import com.ljl.note.collection.common.enums.ErrorCode;
+import com.ljl.note.collection.common.soa.SoaContext;
+import com.ljl.note.collection.common.soa.SoaResponse;
 
 /**
  * Created by liaura_ljl on 2019/8/2.

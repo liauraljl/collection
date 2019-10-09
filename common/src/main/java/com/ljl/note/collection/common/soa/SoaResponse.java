@@ -1,4 +1,4 @@
-package com.ljl.note.collection.common.utils;
+package com.ljl.note.collection.common.soa;
 
 import lombok.Data;
 

@@ -1,7 +1,7 @@
 package com.ljl.note.collection.liveRecord.service;
 
 import com.alibaba.fastjson.JSON;
-import com.ljl.note.collection.common.exception.BaseErrorCode;
+import com.ljl.note.collection.common.enums.BaseErrorCode;
 import com.ljl.note.collection.common.exception.BaseException;
 import com.ljl.note.collection.common.utils.DateUtils;
 import com.ljl.note.collection.common.utils.LocalDateTimeUtil;

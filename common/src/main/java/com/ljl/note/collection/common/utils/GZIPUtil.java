@@ -1,5 +1,6 @@
 package com.ljl.note.collection.common.utils;
 
+import com.ljl.note.collection.common.callback.DealFileCallback;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -93,7 +94,7 @@ public class GZIPUtil {
 
 
 
-    private static void getAndHandleAllFile(File parentPath,DealFileCallback<File> fileCallback){
+    private static void getAndHandleAllFile(File parentPath, DealFileCallback<File> fileCallback){
         if(parentPath.isFile()) {
             if(fileCallback != null){
                 fileCallback.callBack(parentPath);
