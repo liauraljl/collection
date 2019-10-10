@@ -6,7 +6,9 @@
 		<groupId>com.ljl.note.collection</groupId>
 		<artifactId>live-record</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
-		<relativePath/> <!-- lookup parent from repository -->
+<!--
+		<relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;
+-->
 	</parent>
 	<artifactId>live-record-service</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
@@ -44,18 +46,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
 		</dependency>
 
 		<!-- redis start-->
@@ -165,6 +167,18 @@
 			<artifactId>tencentcloud-sdk-java</artifactId>
 			<!-- go to https://search.maven.org/search?q=tencentcloud-sdk-java and get the latest version. -->
 			<version>3.0.86</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.101tec</groupId>
+			<artifactId>zkclient</artifactId>
+			<version>0.10</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 

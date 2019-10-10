@@ -1,6 +1,7 @@
 package com.ljl.note.collection.live.export;
 
 import com.ljl.note.collection.common.soa.SoaResponse;
+import com.ljl.note.collection.common.utils.SoaResponseUtil;
 import com.ljl.note.collection.live.domain.bo.LiveRoomInfoBO;
 import com.ljl.note.collection.live.domain.dto.LiveRoomInfoGetDTO;
 import com.ljl.note.collection.live.service.LiveRoomExport;
@@ -18,6 +19,9 @@ public class LiveRoomExportImpl implements LiveRoomExport {
      */
     @Override
     public SoaResponse<LiveRoomInfoBO, ?> queryRoomByRoomId(LiveRoomInfoGetDTO liveRoomInfoGetDTO) {
-        return null;
+        LiveRoomInfoBO liveRoomInfoBO=new LiveRoomInfoBO();
+        liveRoomInfoBO.setTitle("测试");
+        liveRoomInfoBO.setRemark("remark");
+        return SoaResponseUtil.ok(liveRoomInfoBO);
     }
 }

@@ -19,3 +19,25 @@ redis:
     minIdle: 1
   port: 6379
   timeout: 2000
+
+jdbc:
+  connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+  driver-class-name: com.mysql.cj.jdbc.Driver
+  filters: stat
+  initial-size: 5
+  max-active: 20
+  max-pool-prepared-statement-per-connection-size: 20
+  max-wait: 30000
+  min-evictable-idle-time-millis: 300000
+  min-idle: 5
+  password: root
+  pool-prepared-statements: true
+  test-on-borrow: false
+  test-on-return: false
+  test-while-idle: true
+  time-between-eviction-runs-millis: 60000
+  type: com.alibaba.druid.pool.DruidDataSource
+  url: jdbc:mysql://127.0.0.1:3306/db_test?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+  use-global-data-source-stat: true
+  username: root
+  validation-query: select '1' from dual

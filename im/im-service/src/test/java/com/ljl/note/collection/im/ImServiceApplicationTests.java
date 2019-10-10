@@ -1,4 +1,4 @@
-package com.ljl.note.collection;
+package com.ljl.note.collection.im;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

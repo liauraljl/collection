@@ -52,10 +52,10 @@ public class LiveRecordServiceImpl {
     @Autowired
     private QCloudLiveRecordService qCloudLiveRecordService;
 
-    @Value("${pushDomain}")
+    @Value("${pushDomain:sss}")
     private String pushDomain;
 
-    @Value("${qcloud.video.bizId}")
+    @Value("${qcloud.video.bizId:sss}")
     private String bizId;
 
     private static final String LIVERECORDFILEFORMAT = "mp4";

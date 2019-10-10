@@ -6,7 +6,7 @@
 	   http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
     <!-- 本机服务dubbo 服务定义 -->
     <dubbo:application name="live-service" owner="owner"/>
-    <dubbo:protocol name="dubbo" port="20880" />
+    <dubbo:protocol name="dubbo" port="28094" />
     <dubbo:provider retries="0" timeout="5000" threads="400"/>
     <!-- 通用配置 -->
     <dubbo:registry address="zookeeper://localhost:2181" />

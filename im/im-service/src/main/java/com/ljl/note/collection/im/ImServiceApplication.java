@@ -1,4 +1,4 @@
-package com.ljl.note.collection.support;
+package com.ljl.note.collection.im;
 
 import com.alibaba.dubbo.spring.boot.annotation.EnableDubboConfiguration;
 import org.springframework.boot.SpringApplication;
@@ -8,21 +8,21 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+@EnableDubboConfiguration
+@EnableAsync
 @ImportResource(locations = {
 		"classpath*:applicationContext-dubbo.xml"
 })
-@EnableDubboConfiguration
-@EnableAsync
 @SpringBootApplication
-public class SupportApplication extends SpringBootServletInitializer {
+public class ImServiceApplication extends SpringBootServletInitializer {
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(SupportApplication.class);
+		return application.sources(ImServiceApplication.class);
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(SupportApplication.class, args);
+		SpringApplication.run(ImServiceApplication.class, args);
 	}
 
 }

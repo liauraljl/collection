@@ -33,10 +33,10 @@ public class QCloudVodCountService {
     private static final String SIGNATUREMETHOD="HmacSHA1";
     private static final String SRCSTR="GETvod.api.qcloud.com/v2/index.php?";
 
-    @Value("${qcloud.secretId}")
+    @Value("${qcloud.secretId:sss}")
     private String secretId;
 
-    @Value("${qcloud.secretKey}")
+    @Value("${qcloud.secretKey:sss}")
     private String secretKey;
 
     /**

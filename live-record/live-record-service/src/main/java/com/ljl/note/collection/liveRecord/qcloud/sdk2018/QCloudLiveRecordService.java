@@ -24,10 +24,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class QCloudLiveRecordService {
-    @Value("${qcloud.secretId}")
+    @Value("${qcloud.secretId:sss}")
     private String secretId;
 
-    @Value("${qcloud.secretKey}")
+    @Value("${qcloud.secretKey:sss}")
     private String secretKey;
 
     private static final String LIVEENDPOINT="live.tencentcloudapi.com";

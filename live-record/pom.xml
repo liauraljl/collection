@@ -19,6 +19,7 @@
         <fastjson.version>1.2.53</fastjson.version>
         <guava.version>23.0</guava.version>
         <redisson.version>3.7.3</redisson.version>
+        <jedis.version>2.9.1</jedis.version>
         <druid.version>1.1.10</druid.version>
         <mybatis.version>3.4.6</mybatis.version>
         <spring-jdbc.version>5.0.4.RELEASE</spring-jdbc.version>

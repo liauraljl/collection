@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 public class HttpRequestUtil {
 
     private static final int CONNECT_TIMEOUT = 500;
@@ -56,9 +55,6 @@ public class HttpRequestUtil {
      * @throws Exception
      */
     public static String get(String url, Map<String, String> params, int timeout) throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("m : {}, u : {}, p : {}", "GET", url, JSON.toJSONString(params));
-        }
         if (params != null && !params.isEmpty()) {
             String pstr = Joiner.on("&").withKeyValueSeparator("=").useForNull("null").join(params);
             StringBuilder sb = new StringBuilder(url);
@@ -81,9 +77,9 @@ public class HttpRequestUtil {
      * @throws Exception
      */
     public static String get(String url, int timeout) throws Exception {
-        if (log.isDebugEnabled()) {
+        /*if (log.isDebugEnabled()) {
             log.debug("m : {}, u : {}", "GET", url);
-        }
+        }*/
         return request(new HttpGet(url), null, null, timeout);
     }
 
@@ -105,9 +101,9 @@ public class HttpRequestUtil {
      * @throws Exception
      */
     public static String post(String url, Map<String, String> params, int timeout) throws Exception {
-        if (log.isDebugEnabled()) {
+        /*if (log.isDebugEnabled()) {
             log.debug("m : {}, u : {}, p : {}", "POST", url, JSON.toJSONString(params));
-        }
+        }*/
         HttpPost httpPost = new HttpPost(url);
         List<NameValuePair> list = new ArrayList<>();
         if (params != null && !params.isEmpty()) {
@@ -137,9 +133,9 @@ public class HttpRequestUtil {
      * @throws Exception
      */
     public static String postJson(String url, Object obj, int timeout) throws Exception {
-        if (log.isDebugEnabled()) {
+        /*if (log.isDebugEnabled()) {
             log.debug("m : {}, u : {}, p : {}", "POST", url, obj != null ? JSON.toJSONString(obj) : null);
-        }
+        }*/
         HttpPost httpPost = new HttpPost(url);
         Map<String, String> heads = new HashMap<>();
         heads.put(HTTP.CONTENT_TYPE, "application/json");
@@ -204,14 +200,14 @@ public class HttpRequestUtil {
                         try {
                             //Cat.logTransaction(URL_REQ_TYPE, catName, startTime, elapsed, Message.SUCCESS);
                         } catch (Exception e) {
-                            log.warn("cat exception", e);
+                            /*log.warn("cat exception", e);*/
                         }
-                        if (log.isDebugEnabled()) {
+                        /*if (log.isDebugEnabled()) {
                             log.debug("used time {}ms", elapsed);
                             log.debug("--------------------Response content--------------------");
                             log.debug(resp);
                             log.debug("--------------------Response content--------------------");
-                        }
+                        }*/
                         return resp;
                     } catch (ParseException ex) {
                         throw new ClientProtocolException(ex);
@@ -220,7 +216,7 @@ public class HttpRequestUtil {
                     try {
                         //Cat.logTransaction(URL_REQ_TYPE, catName, startTime, elapsed, Message.FAIL);
                     } catch (Exception e) {
-                        log.warn("cat exception", e);
+                        //log.warn("cat exception", e);
                     }
                     throw new ClientProtocolException("Unexpected response status: " + status);
                 }

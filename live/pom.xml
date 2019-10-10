@@ -9,9 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <description>直播服务</description>
+    <artifactId>live</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <artifactId>live</artifactId>
 
     <properties>
         <java.version>1.8</java.version>
