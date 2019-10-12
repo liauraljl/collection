@@ -9,7 +9,7 @@
     <dubbo:protocol name="dubbo" port="20880" />
     <dubbo:provider retries="0" timeout="5000" threads="400"/>
     <!-- 通用配置 -->
-    <dubbo:registry address="zookeeper://localhost:2181" />
+    <dubbo:registry address="zookeeper://localhost:2181" register="false"/><!--只订阅-->
 
     <!-- 通用配置 -->
     <dubbo:consumer check="false"/>

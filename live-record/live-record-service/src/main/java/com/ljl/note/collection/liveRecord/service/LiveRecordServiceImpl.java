@@ -13,10 +13,7 @@ import com.ljl.note.collection.liveRecord.common.RedisKey;
 import com.ljl.note.collection.liveRecord.common.RedisService;
 import com.ljl.note.collection.liveRecord.domain.dto.LiveRecordTaskEndDTO;
 import com.ljl.note.collection.liveRecord.domain.dto.LiveRecordTaskStartDTO;
-import com.ljl.note.collection.liveRecord.domain.enums.LiveRecordCusOpenTypeEnum;
-import com.ljl.note.collection.liveRecord.domain.enums.LiveRecordTaskStatusEnum;
-import com.ljl.note.collection.liveRecord.domain.enums.VodTaskStatusEnum;
-import com.ljl.note.collection.liveRecord.domain.enums.VodTaskTypeEnum;
+import com.ljl.note.collection.liveRecord.domain.enums.*;
 import com.ljl.note.collection.liveRecord.mapper.LiveRecordMapper;
 import com.ljl.note.collection.liveRecord.model.LiveRecord;
 import com.ljl.note.collection.liveRecord.qcloud.sdk2018.QCloudLiveRecordService;
@@ -87,12 +84,12 @@ public class LiveRecordServiceImpl {
      * @param liveRecordTaskStartDTO
      * @return
      */
-    public Boolean startLiveRecordTask(LiveRecordTaskStartDTO liveRecordTaskStartDTO){
+    public Boolean startLiveRecordTask(LiveRecordTaskStartDTO liveRecordTaskStartDTO) {
         log.info("startLiveRecordTask:{}", JSON.toJSONString(liveRecordTaskStartDTO));
-        LiveRoomInfoGetDTO liveRoomInfoGetDTO=new LiveRoomInfoGetDTO();
+        LiveRoomInfoGetDTO liveRoomInfoGetDTO = new LiveRoomInfoGetDTO();
         liveRoomInfoGetDTO.setRoomId(liveRecordTaskStartDTO.getRoomId());
-        LiveRoomInfoBO liveRoomInfo= SoaResponseUtil.unpack(liveRoomExport.queryRoomByRoomId(liveRoomInfoGetDTO));
-        if(null==liveRoomInfo||null==liveRoomInfo.getLiveCode()){
+        LiveRoomInfoBO liveRoomInfo = SoaResponseUtil.unpack(liveRoomExport.queryRoomByRoomId(liveRoomInfoGetDTO));
+        if (null == liveRoomInfo || null == liveRoomInfo.getLiveCode()) {
             log.error("创建录播失败！roomId:{}", liveRecordTaskStartDTO.getRoomId());
             throw new BaseException(BaseErrorCode.LIVE_ROOM_DELETED);
         }
@@ -100,16 +97,16 @@ public class LiveRecordServiceImpl {
             Date startTime = new Date();
             Date endTime = LocalDateTimeUtil.toDate(LocalDateTimeUtil.toLocalDateTime(startTime).plusHours(24));//直播时长
             //创建录播任务
-            Future<CreateLiveRecordResponse> future=liveRecordPartDeleteExecutor.submit(()->{
+            Future<CreateLiveRecordResponse> future = liveRecordPartDeleteExecutor.submit(() -> {
                 CreateLiveRecordRequest request = new CreateLiveRecordRequest();
                 request.setDomainName(pushDomain);
-                request.setStreamName(bizId+"_"+liveRoomInfo.getLiveCode());
+                request.setStreamName(bizId + "_" + liveRoomInfo.getLiveCode());
                 request.setStartTime(DateUtils.dateToStr(startTime, "yyyy-MM-dd HH:mm:ss"));
                 request.setEndTime(DateUtils.dateToStr(endTime, "yyyy-MM-dd HH:mm:ss"));
                 request.setFileFormat(LIVERECORDFILEFORMAT);
                 return qCloudLiveRecordService.createLiveRecordTask(request);
             });
-            LiveRecord liveRecord=new LiveRecord();
+            LiveRecord liveRecord = new LiveRecord();
             liveRecord.setStartTime(startTime);
             liveRecord.setEndTime(endTime);
             liveRecord.setCusOpenFlag(LiveRecordCusOpenTypeEnum.Off.getType());
@@ -139,12 +136,12 @@ public class LiveRecordServiceImpl {
      * @param liveRecordTaskEndDTO
      * @return
      */
-    public Boolean endLiveRecordTask(LiveRecordTaskEndDTO liveRecordTaskEndDTO){
+    public Boolean endLiveRecordTask(LiveRecordTaskEndDTO liveRecordTaskEndDTO) {
         log.info("endLiveRecordTask:{}", JSON.toJSONString(liveRecordTaskEndDTO));
-        LiveRoomInfoGetDTO liveRoomInfoGetDTO=new LiveRoomInfoGetDTO();
+        LiveRoomInfoGetDTO liveRoomInfoGetDTO = new LiveRoomInfoGetDTO();
         liveRoomInfoGetDTO.setRoomId(liveRecordTaskEndDTO.getRoomId());
-        LiveRoomInfoBO liveRoomInfo= SoaResponseUtil.unpack(liveRoomExport.queryRoomByRoomId(liveRoomInfoGetDTO));
-        if(null==liveRoomInfo){
+        LiveRoomInfoBO liveRoomInfo = SoaResponseUtil.unpack(liveRoomExport.queryRoomByRoomId(liveRoomInfoGetDTO));
+        if (null == liveRoomInfo) {
             log.error("终止录播任务失败！roomId:{}", liveRecordTaskEndDTO.getRoomId());
             throw new BaseException(BaseErrorCode.LIVE_ROOM_DELETED);
         }
@@ -152,7 +149,7 @@ public class LiveRecordServiceImpl {
         example.createCriteria().andEqualTo("pid", liveRecordTaskEndDTO.getPid())
                 .andEqualTo("roomId", liveRecordTaskEndDTO.getRoomId())
                 .andEqualTo("recordTaskStatus", LiveRecordTaskStatusEnum.Processing.getType())
-                .andGreaterThan("recordTaskId",0)
+                .andGreaterThan("recordTaskId", 0)
                 .andEqualTo("deleted", 0);
         List<LiveRecord> liveRecordList = liveRecordMapper.selectByExample(example);
         if (null == liveRecordList || liveRecordList.size() == 0) {
@@ -161,12 +158,12 @@ public class LiveRecordServiceImpl {
         }
         LiveRecord liveRecord = liveRecordList.get(0);
         StopLiveRecordRequest request = new StopLiveRecordRequest();
-        request.setStreamName(bizId+"_"+liveRoomInfo.getLiveCode());
+        request.setStreamName(bizId + "_" + liveRoomInfo.getLiveCode());
         request.setTaskId(liveRecord.getRecordTaskId());
         //终止录制任务
         Boolean endLiveRecordTaskResult = qCloudLiveRecordService.endLiveRecordTask(request);
         //加入视频文件获取队列(延迟队列)
-        if(endLiveRecordTaskResult){
+        if (endLiveRecordTaskResult) {
             liveRecord.setRecordTaskStatus(LiveRecordTaskStatusEnum.StopRecord.getType());
             liveRecord.setEndTime(new Date());
             liveRecordMapper.updateByPrimaryKeySelective(liveRecord);
@@ -192,9 +189,9 @@ public class LiveRecordServiceImpl {
             log.info("录播视频不存在或已删除！liveRecordId:{}", liveRecordId);
             return true;
         }
-        LiveRoomInfoGetDTO liveRoomInfoGetDTO=new LiveRoomInfoGetDTO();
+        LiveRoomInfoGetDTO liveRoomInfoGetDTO = new LiveRoomInfoGetDTO();
         liveRoomInfoGetDTO.setRoomId(liveRecord.getRoomId());
-        LiveRoomInfoBO liveRoomInfo= SoaResponseUtil.unpack(liveRoomExport.queryRoomByRoomId(liveRoomInfoGetDTO));
+        LiveRoomInfoBO liveRoomInfo = SoaResponseUtil.unpack(liveRoomExport.queryRoomByRoomId(liveRoomInfoGetDTO));
         if (null == liveRoomInfo) {
             log.info("直播场次不存在或已删除！roomId:{}", liveRecord.getRoomId());
             return true;
@@ -213,7 +210,7 @@ public class LiveRecordServiceImpl {
                     searchMediaRequest.setStartTime(DateUtils.dateToStr(utcStartTime, "yyyy-MM-dd'T'HH:mm:ss'Z'"));
                     searchMediaRequest.setEndTime(DateUtils.dateToStr(utcEndTime, "yyyy-MM-dd'T'HH:mm:ss'Z'"));
                     searchMediaRequest.setSourceType("Record");
-                    searchMediaRequest.setStreamId(bizId+"_"+liveRoomInfo.getLiveCode());
+                    searchMediaRequest.setStreamId(bizId + "_" + liveRoomInfo.getLiveCode());
                     SortBy sortBy = new SortBy();
                     sortBy.setField("CreateTime");
                     sortBy.setOrder("Asc");
@@ -236,14 +233,14 @@ public class LiveRecordServiceImpl {
                         editMediaRequest.setInputType("File");
                         EditMediaFileInfo[] mediaFileInfos = new EditMediaFileInfo[mediaInfos.length];
                         String filePartKey = String.format(RedisKey.LIVERECORD_VIDEO_PART_FILEID, liveRecordId);
-                        BoundSetOperations setOperations=redisTemplate.boundSetOps(filePartKey);
+                        BoundSetOperations setOperations = redisTemplate.boundSetOps(filePartKey);
                         for (int i = 0; i < mediaInfos.length; i++) {
                             EditMediaFileInfo editMediaFileInfo = new EditMediaFileInfo();
                             editMediaFileInfo.setFileId(mediaInfos[i].getFileId());
                             mediaFileInfos[i] = editMediaFileInfo;
                             setOperations.add(mediaInfos[i].getFileId());
                         }
-                        redisTemplate.expire(filePartKey,1,TimeUnit.DAYS);
+                        redisTemplate.expire(filePartKey, 1, TimeUnit.DAYS);
                         editMediaRequest.setFileInfos(mediaFileInfos);
                         EditMediaResponse editMediaResponse = qCloudLiveRecordService.editMedia(editMediaRequest);
                         liveRecord.setRecordTaskStatus(LiveRecordTaskStatusEnum.Merging.getType());
@@ -257,9 +254,9 @@ public class LiveRecordServiceImpl {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                try{
+                try {
                     redisService.unLock(String.format(RedisKey.LIVERECORD_VIDEO_GET_LIVERECORD_LOCK, liveRecordId));
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -290,9 +287,9 @@ public class LiveRecordServiceImpl {
             log.info("录播视频不存在或已删除！liveRecordId:{}", liveRecordId);
             return true;
         }
-        LiveRoomInfoGetDTO liveRoomInfoGetDTO=new LiveRoomInfoGetDTO();
+        LiveRoomInfoGetDTO liveRoomInfoGetDTO = new LiveRoomInfoGetDTO();
         liveRoomInfoGetDTO.setRoomId(liveRecord.getRoomId());
-        LiveRoomInfoBO liveRoomInfo= SoaResponseUtil.unpack(liveRoomExport.queryRoomByRoomId(liveRoomInfoGetDTO));
+        LiveRoomInfoBO liveRoomInfo = SoaResponseUtil.unpack(liveRoomExport.queryRoomByRoomId(liveRoomInfoGetDTO));
         if (null == liveRoomInfo) {
             log.info("直播场次不存在或已删除！roomId:{}", liveRecord.getRoomId());
             return true;
@@ -328,9 +325,9 @@ public class LiveRecordServiceImpl {
                         return false;
                     }
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 redisService.unLock(String.format(RedisKey.LIVERECORD_VIDEO_GETMERGE_LOCK, liveRecordId));
             }
         }
@@ -400,10 +397,10 @@ public class LiveRecordServiceImpl {
     /**
      * 通过liveRecordId获取录播视频文件名称
      */
-    public List<LiveRecord> getLiveRecordByIds(Set<Long> liveRecords){
+    public List<LiveRecord> getLiveRecordByIds(Set<Long> liveRecords) {
         Example example = new Example(LiveRecord.class);
         Example.Criteria criteria = example.createCriteria();
-        if (liveRecords != null && liveRecords.size()>0) {
+        if (liveRecords != null && liveRecords.size() > 0) {
             criteria.andIn("id", liveRecords);
         }
         return liveRecordMapper.selectByExample(example);
@@ -429,22 +426,24 @@ public class LiveRecordServiceImpl {
      * 获取录播视频任务
      */
     @PostConstruct
-    public void mergeLiveRecordFromListTask(){
-        new Thread(()->{
-            while (true){
-                try{
-                    Long liveRecordId= Convert.toLong(redisTemplate.opsForList().rightPop(RedisKey.LIVERECORD_VIDEO_GET_LIST,10,TimeUnit.SECONDS));
-                    String retryKey=String.format(RedisKey.LIVERECORD_VIDEO_GET_RETRY,liveRecordId);
-                    if(redisTemplate.hasKey(retryKey)){
-                        //todo 引入限流
-                        Future<Boolean> mergeLiveRecordResult=liveRecordMergeTaskExecutor.submit(()-> mergeLiveRecord(liveRecordId));
-                        if(!mergeLiveRecordResult.get()){
-                            //失败重试
-                            redisTemplate.opsForList().leftPush(RedisKey.LIVERECORD_VIDEO_GET_LIST,liveRecordId);
-                        }
+    public void mergeLiveRecordFromListTask() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Long liveRecordId = Convert.toLong(redisTemplate.opsForList()
+                            .rightPop(RedisKey.LIVERECORD_VIDEO_GET_LIST, 10, TimeUnit.SECONDS));//阻塞读
+                    if (liveRecordId == null) {
+                        continue;
                     }
-                }catch (Exception e){
-                    e.printStackTrace();
+                    String retryKey = String.format(RedisKey.LIVERECORD_VIDEO_GET_RETRY, liveRecordId);
+                    if (redisTemplate.hasKey(retryKey)) {
+                        //todo 引入限流
+                        liveRecordMergeTaskExecutor.execute(() -> handleTask(LiveRecordTaskTypeEnum.MergeLiveRecordFromListTask, liveRecordId));
+                    } else {
+                        log.info("超过一小时，未查询到录播视频，liveRecordId:{}", liveRecordId);
+                    }
+                } catch (Exception e) {
+                    System.out.println("空闲链接自动断开异常处理，继续执行！");
                 }
             }
         }).start();
@@ -454,27 +453,55 @@ public class LiveRecordServiceImpl {
      * 查询视频合并任务处理结果
      */
     @PostConstruct
-    public void getMergeResultFromListTask(){
-        new Thread(()->{
-            while (true){
-                try{
-                    Long liveRecordId=Convert.toLong(redisTemplate.opsForList().rightPop(RedisKey.LIVERECORD_VIDEO_GETMERGE_LIST,10,TimeUnit.SECONDS));
-                    String retryKey=String.format(RedisKey.LIVERECORD_VIDEO_GETMERGE_RETRY,liveRecordId);
-                    if(redisTemplate.hasKey(retryKey)){
-                        //todo 引入限流
-                        Future<Boolean> getMergeResult=queryLiveRecordMergeResultExecutor.submit(()->queryMergeTaskResult(liveRecordId));
-                        if(!getMergeResult.get()){
-                            //失败重试
-                            if(redisTemplate.hasKey(retryKey)){
-                                redisTemplate.opsForList().leftPush(RedisKey.LIVERECORD_VIDEO_GETMERGE_LIST,liveRecordId);
-                            }
-                        }
+    public void getMergeResultFromListTask() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Long liveRecordId = Convert.toLong(redisTemplate.opsForList()
+                            .rightPop(RedisKey.LIVERECORD_VIDEO_GETMERGE_LIST, 10, TimeUnit.SECONDS));//阻塞读
+                    if (liveRecordId == null) {
+                        continue;
                     }
-                }catch (Exception e){
-                    e.printStackTrace();
+                    String retryKey = String.format(RedisKey.LIVERECORD_VIDEO_GETMERGE_RETRY, liveRecordId);
+                    if (redisTemplate.hasKey(retryKey)) {
+                        //todo 引入限流
+                        queryLiveRecordMergeResultExecutor.execute(() -> handleTask(LiveRecordTaskTypeEnum.GetMergeResultFromListTask, liveRecordId));
+                    } else {
+                        log.info("超过一小时，未查询到视频合并任务处理结果，liveRecordId:{}", liveRecordId);
+                    }
+                } catch (Exception e) {
+                    System.out.println("空闲链接自动断开异常处理，继续执行！");
                 }
             }
         }).start();
+    }
+
+    /**
+     * 根据任务类型调用任务
+     *
+     * @param liveRecordTaskTypeEnum
+     * @param liveRecordId
+     */
+    private void handleTask(LiveRecordTaskTypeEnum liveRecordTaskTypeEnum, Long liveRecordId) {
+        Boolean result;
+        switch (liveRecordTaskTypeEnum) {
+            case MergeLiveRecordFromListTask:
+                result = mergeLiveRecord(liveRecordId);
+                if (!result) {
+                    //失败重试
+                    redisTemplate.opsForList().leftPush(RedisKey.LIVERECORD_VIDEO_GET_LIST, liveRecordId);
+                }
+                break;
+            case GetMergeResultFromListTask:
+                result = queryMergeTaskResult(liveRecordId);
+                if (!result) {
+                    //失败重试
+                    redisTemplate.opsForList().leftPush(RedisKey.LIVERECORD_VIDEO_GETMERGE_LIST, liveRecordId);
+                }
+                break;
+            default:
+                break;
+        }
     }
 }
 

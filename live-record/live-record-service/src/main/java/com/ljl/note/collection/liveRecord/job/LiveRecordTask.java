@@ -76,7 +76,8 @@ public class LiveRecordTask {
             redisTemplate.executePipelined((RedisCallback<Object>) redisConnection->{
                redisConnection.openPipeline();
                for(Long liveRecordId:liveRecordIds){
-                   redisConnection.setEx(String.format(RedisKey.LIVERECORD_VIDEO_GET_RETRY,liveRecordId).getBytes(),3600, Longs.toByteArray(liveRecordId));
+                   redisConnection.setEx(String.format(RedisKey.LIVERECORD_VIDEO_GET_RETRY,liveRecordId).getBytes()
+                           ,3600, Longs.toByteArray(liveRecordId));
                }
                redisConnection.closePipeline();
                return null;
@@ -111,7 +112,8 @@ public class LiveRecordTask {
             redisTemplate.executePipelined((RedisCallback<Object>) redisConnection->{
                 redisConnection.openPipeline();
                 for(Long liveRecordId:liveRecordIds){
-                    redisConnection.setEx(String.format(RedisKey.LIVERECORD_VIDEO_GETMERGE_RETRY,liveRecordId).getBytes(),3600, Longs.toByteArray(liveRecordId));
+                    redisConnection.setEx(String.format(RedisKey.LIVERECORD_VIDEO_GETMERGE_RETRY,liveRecordId).getBytes()
+                            ,3600, Longs.toByteArray(liveRecordId));
                 }
                 redisConnection.closePipeline();
                 return null;

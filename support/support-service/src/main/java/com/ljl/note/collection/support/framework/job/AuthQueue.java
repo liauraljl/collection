@@ -8,6 +8,8 @@ import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.DelayQueue;
 
 @Data
@@ -17,7 +19,7 @@ public class AuthQueue {
 
     public static DelayQueue<AuthTask> delayQueue = new DelayQueue<AuthTask>();
 
-    public static Map<String,AuthTask> authMap = new HashMap<>();
+    public static Map<String,AuthTask> authMap = new ConcurrentHashMap<>();
 
     public static void removeId(String channelId){
         delayQueue.remove(authMap.get(channelId));
