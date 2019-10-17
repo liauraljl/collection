@@ -14,9 +14,11 @@ import com.ljl.note.collection.liveRecord.common.RedisService;
 import com.ljl.note.collection.liveRecord.domain.dto.LiveRecordTaskEndDTO;
 import com.ljl.note.collection.liveRecord.domain.dto.LiveRecordTaskStartDTO;
 import com.ljl.note.collection.liveRecord.domain.enums.*;
+import com.ljl.note.collection.liveRecord.enums.SentinelMethodTypeEnum;
 import com.ljl.note.collection.liveRecord.mapper.LiveRecordMapper;
 import com.ljl.note.collection.liveRecord.model.LiveRecord;
 import com.ljl.note.collection.liveRecord.qcloud.sdk2018.QCloudLiveRecordService;
+import com.ljl.note.collection.liveRecord.sentinel.SentinelUtil;
 import com.tencentcloudapi.live.v20180801.models.CreateLiveRecordRequest;
 import com.tencentcloudapi.live.v20180801.models.CreateLiveRecordResponse;
 import com.tencentcloudapi.live.v20180801.models.StopLiveRecordRequest;
@@ -104,6 +106,8 @@ public class LiveRecordServiceImpl {
                 request.setStartTime(DateUtils.dateToStr(startTime, "yyyy-MM-dd HH:mm:ss"));
                 request.setEndTime(DateUtils.dateToStr(endTime, "yyyy-MM-dd HH:mm:ss"));
                 request.setFileFormat(LIVERECORDFILEFORMAT);
+                //sentinel限流
+                SentinelUtil.getAccessKey(SentinelMethodTypeEnum.CreateLiveRecordTaskMethod);
                 return qCloudLiveRecordService.createLiveRecordTask(request);
             });
             LiveRecord liveRecord = new LiveRecord();
@@ -160,6 +164,8 @@ public class LiveRecordServiceImpl {
         StopLiveRecordRequest request = new StopLiveRecordRequest();
         request.setStreamName(bizId + "_" + liveRoomInfo.getLiveCode());
         request.setTaskId(liveRecord.getRecordTaskId());
+        //sentinel限流
+        SentinelUtil.getAccessKey(SentinelMethodTypeEnum.EndLiveRecordTaskMethod);
         //终止录制任务
         Boolean endLiveRecordTaskResult = qCloudLiveRecordService.endLiveRecordTask(request);
         //加入视频文件获取队列(延迟队列)
@@ -216,6 +222,8 @@ public class LiveRecordServiceImpl {
                     sortBy.setOrder("Asc");
                     searchMediaRequest.setSort(sortBy);
                     searchMediaRequest.setLimit(5000L);
+                    //sentinel限流
+                    SentinelUtil.getAccessKey(SentinelMethodTypeEnum.SearchMediaIOMethod);
                     //搜索录播文件
                     SearchMediaResponse response = qCloudLiveRecordService.searchMediaIO(searchMediaRequest);
                     MediaInfo[] mediaInfos = response.getMediaInfoSet();
@@ -242,6 +250,8 @@ public class LiveRecordServiceImpl {
                         }
                         redisTemplate.expire(filePartKey, 1, TimeUnit.DAYS);
                         editMediaRequest.setFileInfos(mediaFileInfos);
+                        //sentinel限流
+                        SentinelUtil.getAccessKey(SentinelMethodTypeEnum.EditMediaMethod);
                         EditMediaResponse editMediaResponse = qCloudLiveRecordService.editMedia(editMediaRequest);
                         liveRecord.setRecordTaskStatus(LiveRecordTaskStatusEnum.Merging.getType());
                         liveRecord.setMergeTaskId(editMediaResponse.getTaskId());
@@ -273,6 +283,8 @@ public class LiveRecordServiceImpl {
         fileIdArr[0] = fileId;
         describeMediaInfosRequest.setFileIds(fileIdArr);
         //describeMediaInfosRequest.setFilters(new String[]{"basicInfo","metaData"});
+        //sentinel限流
+        SentinelUtil.getAccessKey(SentinelMethodTypeEnum.DescribeMediaInfosMethod);
         DescribeMediaInfosResponse describeMediaInfosResponse = qCloudLiveRecordService.describeMediaInfos(describeMediaInfosRequest);
         return describeMediaInfosResponse;
     }
@@ -302,6 +314,8 @@ public class LiveRecordServiceImpl {
                 if (liveRecord.getRecordTaskStatus().equals(LiveRecordTaskStatusEnum.Merging.getType())) {
                     DescribeTaskDetailRequest describeTaskDetailRequest = new DescribeTaskDetailRequest();
                     describeTaskDetailRequest.setTaskId(liveRecord.getMergeTaskId());
+                    //sentinel限流
+                    SentinelUtil.getAccessKey(SentinelMethodTypeEnum.DescribeTaskDetailMethod);
                     //查询任务处理结果
                     DescribeTaskDetailResponse describeTaskDetailResponse = qCloudLiveRecordService.describeTaskDetail(describeTaskDetailRequest);
                     if (describeTaskDetailResponse.getTaskType().equals(VodTaskTypeEnum.EditMedia.getType()) && describeTaskDetailResponse.getStatus().equals(VodTaskStatusEnum.Finish.getType())) {
@@ -317,6 +331,8 @@ public class LiveRecordServiceImpl {
                             for (String fielId : fileIdSet) {
                                 DeleteMediaRequest deleteMediaRequest = new DeleteMediaRequest();
                                 deleteMediaRequest.setFileId(fielId);
+                                //sentinel限流
+                                SentinelUtil.getAccessKey(SentinelMethodTypeEnum.DeleteMediaMethod);
                                 qCloudLiveRecordService.deleteMedia(deleteMediaRequest);
                             }
                             redisTemplate.delete(filePartKey);
@@ -351,6 +367,8 @@ public class LiveRecordServiceImpl {
         liveRecordPartDeleteExecutor.execute(() -> {
             for (LiveRecord liveRecord : liveRecords) {
                 deleteMediaRequest.setFileId(liveRecord.getQcloudFileId());
+                //sentinel限流
+                SentinelUtil.getAccessKey(SentinelMethodTypeEnum.DeleteMediaMethod);
                 qCloudLiveRecordService.deleteMedia(deleteMediaRequest);
             }
         });
@@ -437,7 +455,6 @@ public class LiveRecordServiceImpl {
                     }
                     String retryKey = String.format(RedisKey.LIVERECORD_VIDEO_GET_RETRY, liveRecordId);
                     if (redisTemplate.hasKey(retryKey)) {
-                        //todo 引入限流
                         liveRecordMergeTaskExecutor.execute(() -> handleTask(LiveRecordTaskTypeEnum.MergeLiveRecordFromListTask, liveRecordId));
                     } else {
                         log.info("超过一小时，未查询到录播视频，liveRecordId:{}", liveRecordId);
@@ -464,7 +481,6 @@ public class LiveRecordServiceImpl {
                     }
                     String retryKey = String.format(RedisKey.LIVERECORD_VIDEO_GETMERGE_RETRY, liveRecordId);
                     if (redisTemplate.hasKey(retryKey)) {
-                        //todo 引入限流
                         queryLiveRecordMergeResultExecutor.execute(() -> handleTask(LiveRecordTaskTypeEnum.GetMergeResultFromListTask, liveRecordId));
                     } else {
                         log.info("超过一小时，未查询到视频合并任务处理结果，liveRecordId:{}", liveRecordId);
