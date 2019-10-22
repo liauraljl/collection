@@ -8,10 +8,17 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.ljl.note.collection</groupId>
     <artifactId>process</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <description>流程服务</description>
     <packaging>pom</packaging>
 
+    <properties>
+        <elasticsearch.version>7.4.0</elasticsearch.version>
+    </properties>
 
+    <modules>
+        <module>process-interface</module>
+        <module>process-service</module>
+    </modules>
 </project>
