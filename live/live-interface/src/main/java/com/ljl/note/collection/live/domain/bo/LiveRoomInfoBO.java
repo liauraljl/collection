@@ -7,97 +7,98 @@ import java.util.Date;
 
 @Data
 public class LiveRoomInfoBO implements Serializable{
-    private static final long serialVersionUID=1l;
 
-        private Long roomId;
+    private static final long serialVersionUID = -8846095449021687638L;
 
-        private Long liveRoomId;
+    private Long roomId;
 
-        private String liveCode;
+    private Long liveRoomId;
 
-        private Long storeId;
+    private String liveCode;
 
-        private Long pid;
+    private Long storeId;
 
-        private String shareContext;
+    private Long pid;
 
-        private String shareImgUrl;
+    private String shareContext;
 
-        private String title;
+    private String shareImgUrl;
 
-        private String titleImgUrl;
+    private String title;
 
-        private String coverImgUrl;
+    private String titleImgUrl;
 
-        private String urlBeforeStart;
+    private String coverImgUrl;
 
-        private String urlAfterFinish;
+    private String urlBeforeStart;
 
-        private Integer preSwitch;
+    private String urlAfterFinish;
 
-        private String contextBeforeStart;
+    private Integer preSwitch;
 
-        private Integer endSwitch;
+    private String contextBeforeStart;
 
-        private String contextAfterFinish;
+    private Integer endSwitch;
 
-        private Date planTime;
+    private String contextAfterFinish;
 
-        private Date startTime;
+    private Date planTime;
 
-        private Date finishTime;
+    private Date startTime;
 
-        private Date addTime;
+    private Date finishTime;
 
-        private Date updateTime;
+    private Date addTime;
 
-        private Byte stat;
+    private Date updateTime;
 
-        private Long sumFlux;
+    private Byte stat;
 
-        private String minaQrcodeUrl;
+    private Long sumFlux;
 
-        private Date sumTime;
+    private String minaQrcodeUrl;
 
-        private Integer pauseReason;
+    private Date sumTime;
 
-        private Integer solutionType;
+    private Integer pauseReason;
 
-        private Integer robotNum;
+    private Integer solutionType;
 
-        private Integer roomStyle;
+    private Integer robotNum;
 
-        private String styleTitle;
+    private Integer roomStyle;
 
-        private String pushQrcodeUrl;
+    private String styleTitle;
 
-        private String chatAvatar;
+    private String pushQrcodeUrl;
 
-        private Integer liveType;
+    private String chatAvatar;
 
-        private String anchorName;
+    private Integer liveType;
 
-        private String styleContent;
+    private String anchorName;
 
-        private Boolean wxMsgFlag;
+    private String styleContent;
 
-        private Boolean liveRemindFlag;
+    private Boolean wxMsgFlag;
 
-        private Integer liveRemindTime;
+    private Boolean liveRemindFlag;
 
-        private Integer attentionCount;
+    private Integer liveRemindTime;
 
-        private String remark;
+    private Integer attentionCount;
 
-        private Date personCheckTime;
+    private String remark;
 
-        private String idcard;
+    private Date personCheckTime;
 
-        private String memberRestrict;
+    private String idcard;
 
-        private Integer appletType;
+    private String memberRestrict;
 
-        private Boolean recordOpened;
+    private Integer appletType;
 
-        private Boolean testMark;
-    }
+    private Boolean recordOpened;
+
+    private Boolean testMark;
+}

@@ -6,7 +6,8 @@ import java.io.Serializable;
 
 @Data
 public class LiveRecordTaskEndDTO implements Serializable {
-    private static final long serialVersionUID=1l;
+
+    private static final long serialVersionUID = -1561865022598801575L;
 
     private Long pid;
 
