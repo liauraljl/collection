@@ -31,7 +31,7 @@ public class SendRoomMsg implements SendMessage {
             Assert.notNull(roomMsg,"直播间场次信息不为空！");
             Assert.notNull(roomMsg.getMsg(),"场次信息不为空！");
             String liveCode = roomMsg.getLiveCode();
-            List<ChannelHandlerContext> channelHandlerContexts = NettyConnectionUtil.roomChannelId.get(liveCode);
+            List<ChannelHandlerContext> channelHandlerContexts = NettyConnectionUtil.roomChannelListMap.get(liveCode);
             if(!CollectionUtils.isEmpty(channelHandlerContexts)){
                 WebSocketMsgModel<Object> response = new WebSocketMsgModel<Object>(webSocketMsgModel.getMsgType(), roomMsg.getMsg());
                 String jsonData = JSON.toJSONString(response);

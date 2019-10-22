@@ -5,11 +5,11 @@ import lombok.Getter;
 public enum WebSocketMsgTypeEnum {
     HEART(0,"HEART"),
     AUTH(1,"AUTH"),
-    INAPPLET(2,"INAPPLET"),
+    INSYSTEM(2,"INSYSTEM"),
     INLIVEROOM(3,"INLIVEROOM"),
     OUTLIVEROOM(4,"OUTLIVEROOM"),
-    OUTAPPLET(5,"OUTAPPLET"),
-    /**-----------------华丽分割线-----------------*/
+    OUTSYSTEM(5,"OUTSYSTEM"),
+    /**-----------------活动相关-----------------*/
     FRESH(6,"刷新好物榜"),
     BARGAINACTIV(7,"砍价活动提醒"),
     ROOMBARGAIN(8,"直播间砍价"),

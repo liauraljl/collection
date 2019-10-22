@@ -2,7 +2,6 @@ package com.ljl.note.collection.support.framework.util;
 
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.spi.CopyOnWrite;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -15,21 +14,21 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class NettyConnectionUtil {
 
-    //wid 和 websocket 通道的绑定关系
-    public static Map<Long, ChannelHandlerContext> userChannelMap;//小程序
-    //channel 和 wid 的绑定关系  --权限校验成功写入数据
-    public static Map<String,Long> channelUserMap;//权限
-    //lievCode 和 channel 的绑定关系
-    public static Map<String, List<ChannelHandlerContext>> roomChannelId;//场次liveCode-通道
+    //wid 和 websocket 通道的绑定关系(系统)
+    public static Map<Long, ChannelHandlerContext> userChannelMap;
+    //channelId 和 wid 的绑定关系  --权限校验成功写入数据
+    public static Map<String,Long> channelUserMap;
+    //lievCode 和 List<ChannelHandlerContext> 的绑定关系（场次liveCode-通道）
+    public static Map<String, List<ChannelHandlerContext>> roomChannelListMap;
     //wid 和 liveCode 的绑定关系
-    public static Map<Long,String> userRoomMap;//wid-场次liveCode
-    //channel 和 liveCode的绑定关系
-    public static Map<String,String> channelRoomId;//通道id-场次liveCode
+    public static Map<Long,String> userRoomMap;
+    //channel 和 liveCode的绑定关系（通道id-场次liveCode）
+    public static Map<String,String> channelRoomIdMap;
     static{
         userChannelMap = new ConcurrentHashMap<>();
         channelUserMap = new ConcurrentHashMap<>();
-        roomChannelId = new ConcurrentHashMap<>();
-        channelRoomId = new ConcurrentHashMap<>();
+        roomChannelListMap = new ConcurrentHashMap<>();
+        channelRoomIdMap = new ConcurrentHashMap<>();
         userRoomMap = new ConcurrentHashMap<>();
     }
 
@@ -43,7 +42,7 @@ public class NettyConnectionUtil {
             userChannelMap.put(wid,context);
             channelUserMap.put(context.channel().id().asLongText(),wid);
         }
-        log.info("进入小程序：userChannelMap：{}，channelUserMap：{}",
+        log.info("进入系统：userChannelMap：{}，channelUserMap：{}",
                 Arrays.toString(userChannelMap.entrySet().toArray()),
                 Arrays.toString(channelUserMap.entrySet().toArray()));
     }
@@ -51,27 +50,27 @@ public class NettyConnectionUtil {
     public static void userAddInLiveRoom(String liveCode,ChannelHandlerContext ctx){
         String channelId = ctx.channel().id().asLongText();
         if(channelUserMap.containsKey(channelId) && userChannelMap.containsKey(channelUserMap.get(channelId))){
-            if(roomChannelId.containsKey(liveCode)){
-                roomChannelId.get(liveCode).add(ctx);
+            if(roomChannelListMap.containsKey(liveCode)){
+                roomChannelListMap.get(liveCode).add(ctx);
             }else{
                 ArrayList<ChannelHandlerContext> ctxs = new ArrayList<>();
                 ctxs.add(ctx);
-                roomChannelId.put(liveCode,ctxs);
+                roomChannelListMap.put(liveCode,ctxs);
             }
-            channelRoomId.put(channelId,liveCode);
+            channelRoomIdMap.put(channelId,liveCode);
             userRoomMap.put(channelUserMap.get(channelId),liveCode);
         }
-        log.info("用户进入直播间场次：roomChannelId：{}，channelRoomId：{},userRoomMap:{}",
-                Arrays.toString(roomChannelId.entrySet().toArray()),
-                Arrays.toString(channelRoomId.entrySet().toArray()),
+        log.info("用户进入直播间：roomChannelListMap：{}，channelRoomId：{},userRoomMap:{}",
+                Arrays.toString(roomChannelListMap.entrySet().toArray()),
+                Arrays.toString(channelRoomIdMap.entrySet().toArray()),
                 Arrays.toString(userRoomMap.entrySet().toArray()));
     }
 
     public static void userOutLiveRoom(ChannelHandlerContext ctx){
         String channelId = ctx.channel().id().asLongText();
-        String liveCode = channelRoomId.remove(channelId);
-        if(!StringUtils.isEmpty(liveCode) && !CollectionUtils.isEmpty(roomChannelId.get(liveCode))){
-            roomChannelId.get(liveCode).remove(ctx);
+        String liveCode = channelRoomIdMap.remove(channelId);
+        if(!StringUtils.isEmpty(liveCode) && !CollectionUtils.isEmpty(roomChannelListMap.get(liveCode))){
+            roomChannelListMap.get(liveCode).remove(ctx);
         }
         userRoomMap.remove(channelUserMap.get(channelId));
     }

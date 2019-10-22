@@ -27,7 +27,7 @@ public class WebsocketHandler extends SelfHandler<TextWebSocketFrame> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
         //处理不同类型的数据片段约定
-        //入站消息 AUTH_token    INAPPLET_wid   INLIVEROOM_livecode    OUTLIVEROOM_livecode   OUTAPPLET_wid
+        //入站消息 AUTH_token    INSYSTEM_wid   INLIVEROOM_livecode    OUTLIVEROOM_livecode   OUTSYSTEM_wid
         //出站消息 FRESH_goods   BARGAINACTIV_json  ROOMBARGAIN_3  ORDER_text
         String[] typeAndContent = msg.text().split("_");
         log.info(msg.text());
@@ -38,7 +38,6 @@ public class WebsocketHandler extends SelfHandler<TextWebSocketFrame> {
                 case AUTH:
                     String tokenKey = String.format(RedisKeyConstant.AUTHKEY,typeAndContent[1]);
                     if(tokenKey.equals(redisService.get(tokenKey))){
-                    //if(typeAndContent[1].equals("test")){
                          log.info("入站消息：{}",typeAndContent[1]);
                          AuthQueue.removeId(ctx.channel().id().asLongText());
                          NettyConnectionUtil.channelUserMap.put(ctx.channel().id().asLongText(),0L);
@@ -46,20 +45,20 @@ public class WebsocketHandler extends SelfHandler<TextWebSocketFrame> {
                         log.info("权限校验失败 key:{},value:{}",tokenKey,redisService.get(tokenKey));
                     }
                     break;
-                case INAPPLET:
-                    log.info("进入小程序,wid,{}",typeAndContent[1]);
+                case INSYSTEM:
+                    log.info("进入系统,wid,{}",typeAndContent[1]);
                     NettyConnectionUtil.userAddInRoom(Long.parseLong(typeAndContent[1]),ctx);
                     break;
                 case INLIVEROOM:
-                    log.info("进入直播场次：{}",typeAndContent[1]);
+                    log.info("进入直播间：{}",typeAndContent[1]);
                     NettyConnectionUtil.userAddInLiveRoom(typeAndContent[1],ctx);
                     break;
                 case OUTLIVEROOM:
-                    log.info("退出直播场次：{}",typeAndContent[1]);
+                    log.info("退出直播间：{}",typeAndContent[1]);
                     NettyConnectionUtil.userOutLiveRoom(ctx);
                     break;
-                case OUTAPPLET:
-                    log.info("退出小程序：{}",typeAndContent[1]);
+                case OUTSYSTEM:
+                    log.info("退出系统：{}",typeAndContent[1]);
                     NettyConnectionUtil.userOutRoom(ctx);
                     break;
                 case HEART:
