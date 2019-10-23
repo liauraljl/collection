@@ -41,3 +41,13 @@ jdbc:
   use-global-data-source-stat: true
   username: root
   validation-query: select '1' from dual
+
+es:
+  useEs: true
+  socketAddressStrings: 127.0.0.1:9200
+  scheme: http
+  connectTimeOut: 1000
+  socketTimeOut: 30000
+  connectionRequestTimeOut: 500
+  maxConnTotal: 50
+  maxConnPerRoute: 10

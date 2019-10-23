@@ -7,7 +7,7 @@ import lombok.Getter;
  */
 @Getter
 public enum EsIndexEnum {
-    NODE_USER("nodeUser","流程节点人群"),
+    NODE_USER("node_user","流程节点人群"),
     ;
 
     private String indexName;

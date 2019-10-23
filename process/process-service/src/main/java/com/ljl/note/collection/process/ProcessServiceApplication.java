@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import tk.mybatis.spring.annotation.MapperScan;
 
 
-@MapperScan(basePackages = "com.ljl.note.collection.process.mapper")
+/*@MapperScan(basePackages = "com.ljl.note.collection.process.mapper")*/
 @EnableDubboConfiguration
 @EnableAsync
 @ImportResource(locations = {
