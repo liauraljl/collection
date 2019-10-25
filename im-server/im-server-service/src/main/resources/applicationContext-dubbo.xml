@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	   http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+    <!-- 本机服务dubbo 服务定义 -->
+    <dubbo:application name="im-server-service" owner="owner"/>
+    <dubbo:protocol name="dubbo" port="28094" />
+    <dubbo:provider retries="0" timeout="5000" threads="400"/>
+    <!-- 通用配置 -->
+    <dubbo:registry address="zookeeper://localhost:2181" />
+
+    <!-- 通用配置 -->
+    <dubbo:consumer check="false"/>
+
+    <dubbo:annotation package="com.ljl.note.collection.imServer"/>
+
+
+    <!--&lt;!&ndash;对外提供的Dubbo服务&ndash;&gt;
+    <dubbo:service interface="com.ljl.note.collection.live.service.LiveRoomExport" ref="liveRoomExportImpl"
+                                                  timeout="5000"/>-->
+
+    <!-- 引用的Dubbo服务 -->
+    <!--<dubbo:reference id="userImpl" interfaUserAPIrAPI" retries="0"
+                     check="false" timeout="5000"/>-->
+
+</beans>

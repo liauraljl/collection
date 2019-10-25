@@ -6,9 +6,6 @@
 		<groupId>com.ljl.note.collection</groupId>
 		<artifactId>live-record</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
-<!--
-		<relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;
--->
 	</parent>
 	<artifactId>live-record-service</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
