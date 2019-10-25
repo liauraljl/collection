@@ -80,7 +80,8 @@ public abstract class AbstractEsHandler<T extends EsModel> implements EsHandler<
         checkArg(indexName());
         CreateIndexRequest request = new CreateIndexRequest(indexName());
         request.settings(Settings.builder().put("index.number_of_shards", 3).put("index.number_of_replicas", 2));
-        request.mapping(indexMapping, XContentType.JSON);
+        //创建索引时创建文档类型映射
+        request.mapping(indexMapping,XContentType.JSON);
         try {
             CreateIndexResponse res = getClient().indices().create(request, RequestOptions.DEFAULT);
             if (!res.isAcknowledged()) {
