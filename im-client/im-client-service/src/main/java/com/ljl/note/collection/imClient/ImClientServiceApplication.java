@@ -14,7 +14,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @ImportResource(locations = {
 		"classpath*:applicationContext-dubbo.xml"
 })
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.ljl.note.collection.*"})
 public class ImClientServiceApplication extends SpringBootServletInitializer {
 
 	@Override

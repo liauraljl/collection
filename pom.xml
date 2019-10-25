@@ -53,6 +53,7 @@
 
 	<modules>
 		<module>common</module>
+		<module>im-common</module>
 		<module>web</module><!--8090 -->
 		<module>fan</module><!--8091 -->
 		<module>im-server</module><!--8092 -->
@@ -64,6 +65,6 @@
 		<module>process</module><!--8098 -->
 		<module>red-envelope</module><!--8099 -->
 		<module>support</module><!--8100 -->
-		<module>im-client</module><!--8101 -->
+		<module>im-client</module><!--8101-->
 	</modules>
 </project>

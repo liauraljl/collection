@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import tk.mybatis.spring.annotation.MapperScan;
@@ -15,7 +16,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @ImportResource(locations = {
 		"classpath*:applicationContext-dubbo.xml"
 })
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.ljl.note.collection.*"})
 public class ImServerServiceApplication extends SpringBootServletInitializer {
 
 	@Override
