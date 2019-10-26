@@ -11,7 +11,7 @@ public class ClientHandler extends SimpleChannelInboundHandler {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
         TranslatorData response = (TranslatorData)msg;
-        String producerId = "code:seesionId:002";
+        String producerId = "code:producerId:client";
         MessageProducer messageProducer = RingBufferWorkerPoolFactory.getInstance().getMessageProducer(producerId);
         messageProducer.pushData(response, ctx);
     }

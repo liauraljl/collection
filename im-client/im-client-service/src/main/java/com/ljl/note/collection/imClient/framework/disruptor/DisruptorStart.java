@@ -5,9 +5,11 @@ import com.ljl.note.collection.imCommon.disruptor.MessageConsumer;
 import com.ljl.note.collection.imCommon.disruptor.RingBufferWorkerPoolFactory;
 import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.dsl.ProducerType;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+@Component
 public class DisruptorStart {
 
     @PostConstruct
