@@ -21,6 +21,9 @@
     <dubbo:service interface="com.ljl.note.collection.live.service.LiveRoomExport" ref="liveRoomExportImpl"
                                                   timeout="5000"/>
 
+    <dubbo:service interface="com.ljl.note.collection.live.service.PressTestExport" ref="pressTestExportImpl"
+                   timeout="5000"/>
+
     <!-- 引用的Dubbo服务 -->
     <!--<dubbo:reference id="userImpl" interfaUserAPIrAPI" retries="0"
                      check="false" timeout="5000"/>-->
