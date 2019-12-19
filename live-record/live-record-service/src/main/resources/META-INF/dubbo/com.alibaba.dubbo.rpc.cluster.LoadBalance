@@ -1,0 +1,6 @@
+allExecute=com.ljl.note.collection.liveRecord.config.loadBalance.AllExecuteLoadBalance
+
+myRandom=com.ljl.note.collection.liveRecord.config.loadBalance.dubbo.RandomLoadBalance
+roundrobin=com.ljl.note.collection.liveRecord.config.loadBalance.dubbo.RoundRobinLoadBalance
+leastactive=com.ljl.note.collection.liveRecord.config.loadBalance.dubbo.LeastActiveLoadBalance
+consistenthash=com.ljl.note.collection.liveRecord.config.loadBalance.dubbo.ConsistentHashLoadBalance

@@ -11,5 +11,5 @@ public interface PressTestExport {
      * 压力测试
      * @return
      */
-    SoaResponse<String,?> pressTest();
+    SoaResponse<String,?> pressTest(String data);
 }

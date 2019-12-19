@@ -16,13 +16,13 @@ public class PressTestExportImpl implements PressTestExport {
      * @return
      */
     @Override
-    public SoaResponse<String, ?> pressTest() {
+    public SoaResponse<String, ?> pressTest(String data) {
         /*try {
             //模拟处理耗时
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }*/
-        return SoaResponseUtil.ok("press test!!!");
+        return SoaResponseUtil.ok("press test!!!return:"+data);
     }
 }
