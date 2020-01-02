@@ -53,7 +53,6 @@ public class AllExecuteLoadBalance extends AbstractLoadBalance {
             for(int i=0;i<invokers.size();i++){
                 if(i != offset){
                     invokers.get(i).invoke(invocation);
-                    invokers.get(i).invoke(invocation);
                 }
             }
         }

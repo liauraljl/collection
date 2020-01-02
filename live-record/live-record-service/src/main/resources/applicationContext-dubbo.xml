@@ -22,8 +22,8 @@
                                                   timeout="5000"/>
 
     <!-- 引用的Dubbo服务 -->
-    <dubbo:reference id="liveRoomExportImpl" interface="com.ljl.note.collection.live.service.LiveRoomExport" retries="0" check="false" timeout="5000" >
-        <dubbo:method name="queryRoomByRoomId" loadbalance="allExecute"></dubbo:method>
+    <dubbo:reference id="liveRoomExport" interface="com.ljl.note.collection.live.service.LiveRoomExport" retries="0" check="false" timeout="5000" >
+        <dubbo:method name="queryRoomByRoomId" loadbalance="random"></dubbo:method>
     </dubbo:reference>
 
 </beans>
